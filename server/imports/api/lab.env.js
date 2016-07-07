@@ -23,7 +23,7 @@ var env = function(){
 	  password: nconf.get('docker_port')
         }
 
-  this.docker = new dockerode(docker_settings); //TODO: nconf.get???
+  this.docker = new dockerode(docker_settings); 
   this.etcd = new etcd(etcd_address,etcd_auth);
   this.root_dom = nconf.get("root_domain");
 
@@ -100,7 +100,7 @@ env.prototype.init = function(opts){
 
   var dck = this.docker;
 
-  //image defaults to alpine
+  //get default image
   var img = nconf.get('default_image');
   var crtOpts = null
   var strOpts = null;
@@ -116,7 +116,7 @@ env.prototype.init = function(opts){
 
   //change final options according to opts input, if there is any
   underscore.extend(crtOptsf, crtOpts);
-  
+
   var slf = this;
   return new Promise(function(resolve,reject){
  
@@ -186,14 +186,14 @@ env.prototype.init = function(opts){
 			else{
 		          slf.vmList.labVm = slf.labVm;
 		          resolve();
-			}
+                        }
                       });
-		    }
+                    }
                   });
-		});
-	      }
-	    });
-	  }
+                });
+              }
+            });
+          }
         });
       }
     });
