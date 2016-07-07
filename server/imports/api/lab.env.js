@@ -101,8 +101,7 @@ env.prototype.init = function(opts){
   var dck = this.docker;
 
   //image defaults to alpine
-  //var img = nconf.get('default_image');
-  img = 'alpine'
+  var img = nconf.get('default_image');
   var crtOpts = null
   var strOpts = null;
 
