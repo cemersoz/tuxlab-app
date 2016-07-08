@@ -92,7 +92,7 @@ describe('Example Database', function(){
   });
 
   // Validate that Records Exists
-  if('should have uploaded these records', function(){
+/*  it('should have uploaded these records', function(){
     return server.execute(function(course_id, lab_id){
       var course = Collections.findOne(course_id).fetch();
 
@@ -106,6 +106,6 @@ describe('Example Database', function(){
 
     }, [course_id, lab_id]);
   });
-
+*/
 
 });
