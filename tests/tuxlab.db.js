@@ -92,20 +92,20 @@ describe('Example Database', function(){
   });
 
   // Validate that Records Exists
-/*  it('should have uploaded these records', function(){
+  it('should have uploaded these records', function(){
     return server.execute(function(course_id, lab_id){
-      var course = Collections.findOne(course_id).fetch();
+      var course = Collections.courses.findOne({_id: course_id});
 
           // Check Lab Injection
           expect(course).to.have.property('labs');
           expect(course.labs).to.include(lab_id);
 
-      var lab = Collections.findOne(lab_id).fetch();
+      var lab = Collections.labs.findOne({_id: lab_id});
 
           // Confirm LabFile verifications were run
 
     }, [course_id, lab_id]);
   });
-*/
+
 
 });
