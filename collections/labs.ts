@@ -4,7 +4,10 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from './users.ts';
 
 declare var validateLab : any;
-import validateLab = require('../server/imports/lab/checkLab');
+declare var _ : any;
+
+var _ = require('underscore');
+var validateLab = require('../server/imports/lab/checkLab');
 export const labs : any = new Mongo.Collection('labs');
 
 /**
@@ -123,6 +126,13 @@ labs.allow({
             TuxLog.log('warn', err);
           }
         });
+      });
+      Meteor.publish('user-labs',function(){
+        this.autorun(function(computation){
+          let roles = (<any>(Meteor.users.findOne(this.userId))).roles;
+          let courses = roles.student.map((a) =>{return a[0]});
+          return (courses.map(function(courseId){return {course: courseId, labs: ((Collections.courses.findOne(courseId)).labs)}}));
+	});
       });
     });
   }

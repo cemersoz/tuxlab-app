@@ -95,7 +95,6 @@ describe('Database Schema', function(){
           expect(course.labs).to.include(lab_id);
 
       var lab = Collections.labs.findOne(lab_id);
-
           // Confirm LabFile verifications were run
 
     }, [course_id, lab_id]);
