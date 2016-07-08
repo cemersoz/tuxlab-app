@@ -84,7 +84,7 @@ labs.allow({
   if(Meteor.isServer){
     Meteor.startup(function(){
       var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){
-         if (typeof fieldNames === "undefined"){
+        if (typeof fieldNames === "undefined"){
 		console.log("inserting");
           if(!(doc.course_id && doc.file && //check for lab fields
              (Meteor.isServer || Roles.isInstructorFor(doc.course_id,userid))&& //check for instructor authorization
