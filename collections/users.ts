@@ -15,8 +15,12 @@ if (Meteor.isServer){
       last_name: {
         type: String
       },
-      school: {
+      nickname: {
         type: String
+      },
+      school: {
+        type: String,
+        optional: true
       },
       email: {
         type: String
@@ -27,17 +31,20 @@ if (Meteor.isServer){
     });
     var roleSchema = new SimpleSchema({
       administrator: {
-        type: [String]
+        type: [String],
+        defaultValue: []
       },
       instructor: {
-        type: [String]
+        type: [String],
+        defaultValue: []
       },
       student: {
         type: [{
           type: [String],
           maxCount: 2,
           minCount: 2
-        }]
+        }],
+        defaultValue: []
       }
     });
     var userSchema = new SimpleSchema({

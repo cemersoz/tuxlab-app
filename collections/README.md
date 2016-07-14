@@ -19,6 +19,7 @@ The following document describes the MongoDB Schema used by the TuxLab app:
   profile: {
     first_name : "Derek",
     last_name : "Brown",
+    nickname: "Derek",
     school : "School of Computer Science",
     email : "derek@tuxlab.org",
     picture : "https://placekitten.com/g/250/250"
@@ -59,6 +60,10 @@ The following document describes the MongoDB Schema used by the TuxLab app:
   course_number: "15-131",
   course_name: "Great Practical Ideas for Computer Scientists",
   instructor_name: "Tom Cortina",
+	course_description: {
+		content: "This is the course description.",
+		syllabus: "This is the course syllabus"
+	},
   labs: [
     '574467bc11091623418a429d'
   ]

@@ -30,17 +30,8 @@ labs.allow({
   declare var SimpleSchema: any;
   declare var Collections: any;
   declare var TuxLog: any;
-
-	if(Meteor.isServer) {
-		Meteor.publish('labs', function() {
-			if(this.userId) {
-				return labs.find({ hidden: false });
-			}
-			else {
-				return null;
-			}
-		});
-	}
+  declare var _: any;
+  var _ = require('underscore');
 
   if (Meteor.isServer){
     Meteor.startup(function(){
@@ -97,18 +88,17 @@ labs.allow({
 
 /* LAB VALIDATOR */
   if(Meteor.isServer){
-    var validateLab = require('../server/imports/lab/checkLab.js');
-
+    var validateLab : any = require('../server/imports/lab/checkLab');
     Meteor.startup(function(){
       var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){
         if (typeof fieldNames === "undefined"){
-		console.log("inserting");
+        		console.log("inserting");
           if(!(doc.course_id && doc.file && //check for lab fields
              (Meteor.isServer || Roles.isInstructorFor(doc.course_id,userid))&& //check for instructor authorization
              validateLab(doc.file))){ //check for labfile errors
 	    return false;
 	  }
-	  
+
           //TODO @CEM: Validate Lab
           //TODO @CEM: Generate tasks array
         }
@@ -150,3 +140,43 @@ labs.allow({
       });
     });
   }
+
+/**
+  DATA PUBLICATION
+**/
+if(Meteor.isServer) {
+  Meteor.startup(function() {
+    // Publish labs collection
+    Meteor.publish('labs', function() {
+      this.autorun(function(computation) {
+        
+        // Check if userId exists
+        if(typeof this.userId !== "undefined") {
+          
+          // Check if userId is indeed in the database
+          let user = Meteor.users.findOne(this.userId);
+          if(typeof user !== "undefined") {
+            
+            // Define roles of current user
+            let roles = (<any>(user)).roles;
+            if(typeof roles !== "undefined") {
+              
+              // Get student enrolled courseIds
+              let studentCourses = (_.unzip(roles.student))[0];
+              
+              // Concatenate student enrolled courseIds with Instructor taught courseIds
+              let course_ids = studentCourses.concat(roles.instructor);
+              
+              // Search Query
+              return labs.find({
+                course_id: {
+                  $in: course_ids
+                }
+              });
+            }
+          }
+        }
+      });
+    });
+  });
+}
