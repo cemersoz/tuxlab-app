@@ -2,8 +2,8 @@ Meteor.methods({
   'prepareLab': function(courseId : String ,labId : Number){
     return "here";
   },
-  'tyLab': function() : number{
-    return 3;
-  }
+  'startLab': function(callback : any){},
+  'nextTask': function(callback : any){},
+  'endLab': function(callback : any){}
 });
 
