@@ -5,26 +5,6 @@ var labExec = function(){
   this.env = require('./lab.env.js');
 };
 
-labExec.prototype.check = function(str){
-  if(!str) { return false; }
-    try {
-      var tux = eval(str);
-    }
-    catch(e) {
-      console.log("compile error: "+e);
-      return false;
-    }
-    var tuxOrig = require('./tuxlab.js');
-    return tux.setup &&
-           tux.tasks &&
-           tux.init &&
-           tux.newTask &&
-           (typeof tux.setup === 'function') &&
-           (typeof tux.tasks === 'function') &&
-           (tux.init.toString() === tuxOrig.init.toString()) &&
-           (tux.newTask.toString() === tuxOrig.newTask.toString());
-}
-
 /* init: pulls labFile and initializes labExec object from it
  */
 labExec.prototype.init = function(user,labId,callback){
