@@ -5,9 +5,6 @@ var labExec = function(){
   this.env = require('./lab.env.js');
 };
 
-
-labExec.prototype.env = null;
-labExec.prototype.tuxlab = null;
 /* init: pulls labFile and initializes labExec object from it
  */
 labExec.prototype.init = function(user,labId,callback){
