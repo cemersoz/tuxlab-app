@@ -197,7 +197,6 @@ env.prototype.init = function(opts){
   });
 }
 
-
 /* creates a new container with an image from the options provided,
  * downloads image if it does not yet exist.
  * @param {{},{}} : two options file, dockerodeCreateOptions,dockerodeStartOptions

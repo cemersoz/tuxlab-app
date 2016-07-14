@@ -43,3 +43,4 @@ var NodeCache = require('node-cache');
 
 //import Meteor Methods
 import "./imports/lab/methods.ts"
+import "./imports/lab/methods2.ts"
