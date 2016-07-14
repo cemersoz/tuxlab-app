@@ -1,3 +1,4 @@
+/// <reference path="./lab.exec.d.ts" />
 var _eval = require('eval');
 
 var labExec = function(){
