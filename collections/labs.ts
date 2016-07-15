@@ -106,10 +106,17 @@ labs.allow({
         if (typeof fieldNames === "undefined"){
         		console.log("inserting");
           if(!(doc.course_id && doc.file && //check for lab fields
-             (Meteor.isServer || Roles.isInstructorFor(doc.course_id,userid))&& //check for instructor authorization
-             validateLab(doc.file))){ //check for labfile errors
+             (Meteor.isServer || Roles.isInstructorFor(doc.course_id,userid)))){//check for instructor authorization
 	    return false;
 	  }
+	  else{
+	    var lastTask = validateLab(doc.file);
+	    if(!lastTask){ 
+              return false; }
+	    else{
+              return lastTask.prnt.titleList;
+	    }
+	  } 
 
           //TODO @CEM: Validate Lab
           //TODO @CEM: Generate tasks array
