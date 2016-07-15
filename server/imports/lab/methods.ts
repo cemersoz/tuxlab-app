@@ -1,6 +1,7 @@
 declare var Collections : any;
 var Session = require('../api/lab.session.js');
 Meteor.methods({
+
   /**prepareLab: prepares a labExec object for the current user
    * takes the id of the lab and a callback as parameter
    * callback: (err,pass)
@@ -19,10 +20,18 @@ Meteor.methods({
       * get task md -frontend
       * create course record
       */
-     //lab.init(Meteor.userId(),labId,function(err,parsed){
-      // callback(err,lab.env.getPass,lab);
-     //})
-     //if(lab.env != undefined) console.log("yay")
+     session.init(userid,labId,function(err,res){
+       session.env.getPass(function(err,pass){
+         if(err){
+      	   TuxLog.log("debug","error getting pass from labVm container: "+err);
+      	   callback("Internal Service Error",null);
+      	 }
+      	 else{
+           var resp = {'pass': pass}
+      	   callback(null, resp);
+      	 }
+       });
+     });
   },
   'startLab': function(callback : any){
     /** somehow get session,
@@ -41,7 +50,7 @@ Meteor.methods({
   },
   'endLab': function(callback : any){
     /**session.end(cb)
-     * cb(err,res) 
+     * cb(err,res)
      * call endLab callback(err,res) in cb
      * change course records
      * session.env.deleteRecords deletes etcd records,
@@ -49,5 +58,4 @@ Meteor.methods({
      * remove all vms and deleterecords after lab is completed for good. -highly optional
      */
   }
-});
-
+]);
