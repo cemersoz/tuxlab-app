@@ -1,4 +1,7 @@
 "use strict";
+var tuxOrig = require('./lab.js');
+
+
 /// <reference path="./checkLab.d.ts" />
 module.exports = function(str){
   if(!str) { return false; } //check for file import

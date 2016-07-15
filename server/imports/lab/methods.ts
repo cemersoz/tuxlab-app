@@ -1,5 +1,7 @@
 declare var Collections : any;
 var LabSession = require('../api/lab.session.js');
+declare var TuxLog : any;
+
 Meteor.methods({
 
   /**prepareLab: prepares a labExec object for the current user
