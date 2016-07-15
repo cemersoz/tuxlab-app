@@ -5,8 +5,9 @@ Meteor.methods({
    * callback: (err,parseTasks,labExec)
    */
   'prepareLab': function(labId : number,callback : any){
-     console.log("here");
      var lab = require('../api/lab.session.js');
+     var uId = Meteor.userId();
+     return uId;
      /**lab.init(userId,labId,cb)
       * cb(err,parsedTasks) cache session in cb, get rid of parsedTasks if unnecessary 
       * implement loading wheel here -in callback
