@@ -5,7 +5,6 @@ var session = function(){
   this.env = require('./lab.env.js');
 };
 
-
 session.prototype.env = null;
 session.prototype.lab = null;
 /* init: pulls labFile and initializes session object from it
@@ -45,6 +44,7 @@ session.prototype.init = function(user,labId,callback){
         });
 
         slf.lab.taskNo = 0;
+
 	SessionCache.add(userid,labid,slf,function(err){
 	  if(err){
 	    callback(err,null);
@@ -60,11 +60,13 @@ session.prototype.init = function(user,labId,callback){
 	    });
 	  }
 	});
+
       }
       else{
         // Get LabFile from Cache
         slf.lab.taskNo = 0;
         slf.lab = value;
+
         SessionCache.add(userid,labid,slf,function(err){
 	  if(err){
 	    callback(err,null);
