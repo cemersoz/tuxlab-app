@@ -9,7 +9,7 @@ Meteor.methods({
    * callback: (err,pass)
    * implement loading wheel, md fetch, course record create in callback
    */
-  'prepareLab': function(user : string, labId : string,callback : any){
+  'prepareLab': function(user : string, labId : string, callback : any){
      var session = LabSession();
      var uId = Meteor.userId();
      session.init(uId,labId,callback);
