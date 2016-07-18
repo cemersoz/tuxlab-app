@@ -8,11 +8,6 @@ session.prototype.env = null;
 session.prototype.lab = null;
 /* init: pulls labFile and initializes session object from it
  */
-session.prototype.fakeInit = function(user,labId,callback){
-  var error = null;
-  var result = "here"
-  callback(error,result);
-}
 session.prototype.init = function(user,labId,callback){
   var slf = this;
   this.env = require('./lab.env.js');
@@ -60,7 +55,7 @@ session.prototype.init = function(user,labId,callback){
 	        callback(err,null);
 	      }
 	      else{
-	        callback(null,"succ");//slf.env.getPass(callback);
+	        slf.env.getPass(callback);
 	      }
 	    });
 	  }
@@ -77,7 +72,7 @@ session.prototype.init = function(user,labId,callback){
 	    callback(err,null);
 	  }
 	  else{
-	    callback(null,"succ");//slf.env.getPass(callback);
+	    slf.env.getPass(callback);
 	  }
 	});
       }
