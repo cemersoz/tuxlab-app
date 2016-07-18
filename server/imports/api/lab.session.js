@@ -2,17 +2,22 @@
 var _eval = require('eval');
 
 var session = function(){
-  this.env = require('./lab.env.js');
 };
 
 session.prototype.env = null;
 session.prototype.lab = null;
 /* init: pulls labFile and initializes session object from it
  */
+session.prototype.fakeInit = function(user,labId,callback){
+  var error = null;
+  var result = "here"
+  callback(error,result);
+}
 session.prototype.init = function(user,labId,callback){
   var slf = this;
+  this.env = require('./lab.env.js');
   this.env.setUser(user);
-
+  
   // Get Metadata from Database
   var lab = Collections.labs.findOne({_id: labId}, {fields: {'file' : 0}});
   if(!lab || lab.length < 0){
@@ -55,7 +60,7 @@ session.prototype.init = function(user,labId,callback){
 	        callback(err,null);
 	      }
 	      else{
-	        slf.env.getPass(callback);
+	        callback(null,"succ");//slf.env.getPass(callback);
 	      }
 	    });
 	  }
@@ -66,13 +71,13 @@ session.prototype.init = function(user,labId,callback){
         // Get LabFile from Cache
         slf.lab.taskNo = 0;
         slf.lab = value;
-
+        
         SessionCache.add(userid,labid,slf,function(err){
 	  if(err){
 	    callback(err,null);
 	  }
 	  else{
-	    slf.env.getPass(callback);
+	    callback(null,"succ");//slf.env.getPass(callback);
 	  }
 	});
       }
