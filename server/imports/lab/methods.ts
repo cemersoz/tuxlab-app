@@ -15,13 +15,23 @@ Meteor.methods({
      var session = new LabSession();
      var uId = Meteor.userId();
      var sessionAsync = Meteor.wrapAsync(session.init,session);
-     try{
-       var result = sessionAsync(uId,labId,function(err,res){ console.log(err,res);});
-       return result;
+     var result;
+     var error;
+     sessionAsync(uId,labId,function(err,res){
+       if(err){
+         result = null;
+         error = err;
+       }  
+       else{
+         result = res;
+         error = null;
+       }
+     });
+     if(error){
+       throw new Meteor.Error("Internal Service Error");
      }
-     catch(e){
-       TuxLog.log("warn",e);
-       return "error: "+e;
+     else{
+       return result;
      }
   },
   'nextTask': function(labId : string, callback : any){
