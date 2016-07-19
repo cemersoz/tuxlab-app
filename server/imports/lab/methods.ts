@@ -2,7 +2,7 @@ declare var Collections : any;
 var LabSession = require('../api/lab.session.js');
 declare var TuxLog : any;
 declare var SessionCache : any;
-
+declare var nconf : any;
 var LabSession = require('../api/lab.session.js');
 
 Meteor.methods({
@@ -17,7 +17,7 @@ Meteor.methods({
      var sessionAsync = Meteor.wrapAsync(session.init,session);
      try{
        var sshPass = sessionAsync(uId,labId);
-       var sshInfo = {host: nconf.get(domain_root), pass: sshPass}
+       var sshInfo = {host: nconf.get("domain_root"), pass: sshPass}
        return sshInfo;
      }
      catch(e){
@@ -43,7 +43,7 @@ Meteor.methods({
 	throw new Meteor.Error("Internal Service Error");
       }
       else{
-        var nextAsync = Meteor.wrapAsync(res.next,res);
+          var nextAsync = Meteor.wrapAsync(res.next,res);
 	try{
 	  var result = nextAsync();
 	  return "success"; //TODO: @Derek what to return here?
@@ -77,7 +77,7 @@ Meteor.methods({
       else{
         var endAsync = Meteor.wrapAsync(res.end,res);
 	try{
-	  var result = nextAsync();
+	  var result = endAsync();
 	  return "success" //TODO: @Derek what to return here?
 	}
 	catch(e){

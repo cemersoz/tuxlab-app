@@ -30,7 +30,7 @@ export default class TaskView extends MeteorComponent {
   constructor() {
     super();
 
-    Meteor.call('prepareLab',{courseId: "1", labId: "1"}, function(err,res){
+    Meteor.call('prepareLab',"1","1", function(err,res){
       console.log("fired",err,res);
       //TODO: @Cem res: {host,pass} initialize terminal
     });
