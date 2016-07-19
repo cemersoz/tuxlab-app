@@ -13,18 +13,19 @@ Meteor.methods({
    */
   'prepareLab': function(user : string, labId : string){
      var session = new LabSession();
-     var uId = Meteor.userId();
+     var uId = Meteor.user().profile.nickname;
      var sessionAsync = Meteor.wrapAsync(session.init,session);
      try{
-       var result = sessionAsync(uId,labId,function(err,res){ return "heleoeoel";});
-       return result;
+       var sshPass = sessionAsync(uId,labId);
+       var sshInfo = {host: nconf.get(domain_root), pass: sshPass}
+       return sshInfo;
      }
      catch(e){
-       TuxLog.log("warn",e);
-       return "error: "+e;
+       TuxLog.log("warn",new Meteor.Error(e));
+       throw new Meteor.Error(e);
      }
   },
-  'nextTask': function(labId : string, callback : any){
+  'nextTask': function(labId : string){
     /**session.next(cb)
      * cb(err,res) implement loading wheel here
      * call nextTask callback(err,res) in cb
@@ -33,16 +34,28 @@ Meteor.methods({
      */
     var uId = Meteor.userId();
     SessionCache.get(uId,labId,function(err,res){
-      if(err || !res){
-        callback("Internal Service Error",null);
+      if(err){
+        TuxLog.log("warn",err);
+	throw new Meteor.Error("Internal Service Error");
+      }
+      else if(!res){
+        TuxLog.log("warn",new Meteor.Error("SessionCache.get failed to return a session instance"));
+	throw new Meteor.Error("Internal Service Error");
       }
       else{
-        res.next(callback);     
-        res.next(callback);
+        var nextAsync = Meteor.wrapAsync(res.next,res);
+	try{
+	  var result = nextAsync();
+	  return "success"; //TODO: @Derek what to return here?
+	}
+	catch(e){
+	  TuxLog.log("warn",e);
+	  throw new Meteor.Error("Internal Service Error");
+	}
       }
     });
   },
-  'endLab': function(labId : string, callback : any){
+  'endLab': function(labId : string){
     /**session.end(cb)
      * cb(err,res)
      * call endLab callback(err,res) in cb
@@ -53,11 +66,24 @@ Meteor.methods({
      */
     var uId = Meteor.userId();
     SessionCache.get(uId,labId,function(err,res){
-      if(err || !res){
-        callback("Internal Service Error",null);
+      if(err){
+        TuxLog.log("warn",err);
+	throw new Meteor.Error("Internal Service Error");
+      }
+      else if(!res){
+        TuxLog.log("warn",new Meteor.Error("SessionCache.get failed to return a session instance"));
+	throw new Meteor.Error("Internal Service Error");
       }
       else{
-        res.end(callback);
+        var endAsync = Meteor.wrapAsync(res.end,res);
+	try{
+	  var result = nextAsync();
+	  return "success" //TODO: @Derek what to return here?
+	}
+	catch(e){
+	  TuxLog.log("warn",e);
+	  throw new Meteor.Error("Internal Service Error");
+	}
       }
     });
   }
