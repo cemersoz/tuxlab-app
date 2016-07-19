@@ -1,4 +1,5 @@
 Meteor.methods({
+<<<<<<< HEAD
   'prepareLab': function(user : string ,labId : string){
     return "here";
   },
