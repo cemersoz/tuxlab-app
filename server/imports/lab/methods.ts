@@ -16,7 +16,7 @@ Meteor.methods({
      var uId = Meteor.userId();
      var sessionAsync = Meteor.wrapAsync(session.init,session);
      try{
-       var result = sessionAsync(uId,labId,function(err,res){ console.log(err,res);});
+       var result = sessionAsync(uId,labId,function(err,res){ return "heleoeoel";});
        return result;
      }
      catch(e){
