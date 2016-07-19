@@ -57,19 +57,24 @@ courses.allow({
         instructor_ids: {
           type: [String],
           custom: function() {
-            let validInstructors = Meteor.users.find({ _id: { $in: this.value } }).count();
+            let validInstructors = Meteor.users.find({ _id: { $in: this.value } });
+
+            console.log(validInstructors);
+
             // Check that all instructors exist
-            if(validInstructors !== this.value.length) {
-              courseSchema.addInvalidKeys([{name: "instructor_ids", type: "nonexistantInstructor"}]);
+            if(validInstructors.count() !== this.value.length) {
+              return("One or more instructors are invalid.");
             }
-            // Check that the current user is an instructor of this course
-            if(typeof Meteor.users.findOne({ _id: this.userId }) === "undefined") {
-              courseSchema.addInvalidKeys([{name: "instructor_ids", type: "unauthorizedUser"}]);
+
+            else{
+              return(null);
             }
+
           }
         },
         course_description: {
-          type: descriptionSchema
+          type: descriptionSchema,
+          optional: true
         },
         hidden: {
           type: Boolean,
@@ -89,7 +94,10 @@ courses.allow({
             let validLabs = labs.find({ _id: { $in: this.value } });
             // Check that all labs are valid
             if(validLabs.count() !== this.value.length) {
-              courseSchema.addInvalidKeys([{name: "labs", type: "nonexistantLabs"}]);
+              return("One or more labs were invalid.");
+            }
+            else{
+              return(null);
             }
           }
         }
