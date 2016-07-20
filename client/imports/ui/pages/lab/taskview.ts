@@ -22,7 +22,7 @@
 
 // Meteor method imports
   import "../../../lab/methods.ts"
-
+  import { labs } from '../../../../../collections/labs.ts';
 // Define TaskView Component
 @Component({
   selector: 'tuxlab-taskview',
@@ -43,10 +43,12 @@ export default class TaskView extends MeteorComponent {
   constructor() {
     super();
     // Create Icon Font
-
+    var slf = this;
     Meteor.call('prepareLab',"1","1", function(err,res){
+      slf.labMarkdown = "#Sander \n ##are you sure this will work?";
+      console.log(slf.labMarkdown);
+      
       console.log("fired",err,res);
-      //TODO: @Cem res: {host,pass} initialize terminal
     });
   }
 }

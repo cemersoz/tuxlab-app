@@ -134,11 +134,11 @@ env.prototype.init = function(opts){
 
     //Check whether environment has been initialized correctly
     if(!slf.usr){
-      TuxLog.log('debug','no env user initialized');
+      TuxLog.log('warn','no env user initialized');
       reject("Internal Error");
     }
     if(slf.vmList.labVm){
-      TuxLog.log('labfile_error','trying to init env twice');
+      TuxLog.log('warn','trying to init env twice');
       reject("Internal error");
     }
 
