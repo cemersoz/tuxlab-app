@@ -14,9 +14,10 @@ Meteor.methods({
    */
   'prepareLab': function(user : string, labId : string){
     TuxLog.log("warn","here");
+    var uId = Meteor.user().profile.nickname;
     var sessionAsync = Meteor.wrapAsync(prepLab);
     try{
-      var res = sessionAsync(user,labId);
+      var res = sessionAsync(uId,labId);
       return res;
     }
     catch(e){

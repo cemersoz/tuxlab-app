@@ -162,7 +162,7 @@ env.prototype.init = function(opts){
 	      }
 	      else {
             var etcd_redrouter = {
-        			docker: containerId,
+        			docker_container: containerId,
         			port: 22,
         			username: "root",
         			allowed_auth: ["password"]
@@ -172,10 +172,10 @@ env.prototype.init = function(opts){
             		var dir = slf.root_dom.split('.');
             		dir.reverse().push(slf.usr,'A');
             		slf.helixKey = dir.join('/');
-            		slf.redRouterKey = '/redrouter/ssh::'+slf.usr;
+            		slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
 
             	        //set etcd record for redrouter
-            		etcd.set(slf.redRouterKey,etcd_redrouter,function(err,res){
+            		etcd.set(slf.redRouterKey,JSON.stringify(etcd_redrouter),function(err,res){
             		  if(err){
                                 TuxLog.log('debug', 'error creating redrotuer etcd record: '+err);
             		    reject("Internal error");
