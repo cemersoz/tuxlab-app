@@ -24,7 +24,6 @@
 
 // Meteor method imports
   import "../../../lab/methods.ts"
-  import { labs } from '../../../../../collections/labs.ts';
 // Define TaskView Component
 
 @Component({
@@ -44,8 +43,6 @@
 @InjectUser('user')
 export default class TaskView extends MeteorComponent {
   user: Meteor.User;
-  userid: number;
-  cur_user: boolean;
   public auth : any;
 
   @ViewChild(Terminal) term : Terminal;
@@ -54,7 +51,6 @@ export default class TaskView extends MeteorComponent {
 
   constructor() {
     super();
-    var slf = this;
   }
 
   ngAfterViewInit(){  
