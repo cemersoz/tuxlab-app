@@ -99,7 +99,7 @@ session.prototype.start = function(callback){
     })
     .then(function(){
       if(!this.lab.currentTask.next){
-      TuxLog.log('labfile_error','labfile tasks not properly chained at start');
+      TuxLog.log('warn','labfile tasks not properly chained at start');
       callback("Internal Service error");
       }
       else{

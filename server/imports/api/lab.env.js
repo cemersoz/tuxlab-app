@@ -111,7 +111,7 @@ env.prototype.init = function(opts){
   //declare final options
   var crtOptsf = {
     'Image': img,
-    'Cmd': ['/bin/sh'], 
+    'Cmd': ['./entry.sh'], 
     'name': this.labVm,
     'Hostname': '',
     'User': '',
@@ -152,6 +152,7 @@ env.prototype.init = function(opts){
 
 	  //containerId to be stored in helix
 	  else {
+            console.log("successfully created container");
 	    var containerId = container.id.substring(0,7);
 	    container.start(strOptsf,function(err,data){
 
