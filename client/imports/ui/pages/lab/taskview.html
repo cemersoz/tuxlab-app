@@ -1,4 +1,5 @@
 <div class="tuxlab-taskview">
+
   <!--Markdown View-->
   <div class="tuxlab-taskview-step">
     <tuxlab-markdown>Task markdown loading...</tuxlab-markdown>
@@ -14,9 +15,9 @@
       </button>
     </div>
   </div>
-  
+
   <!--Terminal View-->
   <div class="tuxlab-taskview-terminal">
-    <terminal></terminal>
+		<terminal [username]='username' [password]='password' [host]='host' domain='domain' ></terminal>
   </div>
 </div>
