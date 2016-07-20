@@ -162,48 +162,44 @@ env.prototype.init = function(opts){
 	      }
 	      else {
             var etcd_redrouter = {
-        			docker_container: containerId,
-        			port: 22,
-        			username: "root",
-        			allowed_auth: ["password"]
-			      }
+              docker_container: containerId,
+              port: 22,
+              username: "root",
+              allowed_auth: ["password"]
+	    }
+    	    //etcd directory for helix record
+            var dir = slf.root_dom.split('.');
+            dir.reverse().push(slf.usr,'A');
+            slf.helixKey = dir.join('/');
+            slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
 
-            		//etcd directory for helix record
-            		var dir = slf.root_dom.split('.');
-            		dir.reverse().push(slf.usr,'A');
-            		slf.helixKey = dir.join('/');
-            		slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
-
-            	        //set etcd record for redrouter
-            		etcd.set(slf.redRouterKey,JSON.stringify(etcd_redrouter),function(err,res){
-            		  if(err){
-                                TuxLog.log('debug', 'error creating redrotuer etcd record: '+err);
-            		    reject("Internal error");
-            		  }
-                          else{
-            		  //set etcd record for helixdns
-            		  slf.docker.getContainer(containerId).inspect(function(err,container){
-            		    if(err){
-            		      TuxLog.log('warn', 'docker cannot find the container it just created: '+err);
-            		      reject("Internal error");
-            		      //TODO: get the actual information that we actually want. Perhaps change this entirely
-            		    }
-            		    else{
-
-            		      //set etcd record for helix
-            		      etcd.set(slf.helixKey,container.NetworkSettings,function(err,res){
-            		        if(err){
-            			  TuxLog.log('warn','error creating helix etcd record: '+err);
-            		          reject("Internal error");
-            		        }
-            			else{
-            		          slf.vmList.labVm = slf.labVm;
-            		          resolve();
-                                }
-                             });
-                           }
-                         });
-                       }
+            //set etcd record for redrouter
+            etcd.set(slf.redRouterKey,JSON.stringify(etcd_redrouter),function(err,res){
+              if(err){
+                TuxLog.log('debug', 'error creating redrotuer etcd record: '+err);
+                reject("Internal error");
+              }
+              else{
+                //set etcd record for helixdns
+                slf.docker.getContainer(containerId).inspect(function(err,container){
+                  if(err){
+                    TuxLog.log('warn', 'docker cannot find the container it just created: '+err);
+                    reject("Internal error");
+                    //TODO: get the actual information that we actually want. Perhaps change this entirely
+                  }
+                  else{
+                    //set etcd record for helix
+            	    etcd.set(slf.helixKey,container.NetworkSettings,function(err,res){
+            	      if(err){
+            	        TuxLog.log('warn','error creating helix etcd record: '+err);
+            	          reject("Internal error");
+            	      }
+            	      else{
+            	        slf.vmList.labVm = slf.labVm;
+            	        resolve();
+                      }
+                    });
+                  }
                 });
               }
             });
@@ -211,7 +207,9 @@ env.prototype.init = function(opts){
         });
       }
     });
-  });
+  }
+});
+});
 }
 
 /* creates a new container with an image from the options provided,
