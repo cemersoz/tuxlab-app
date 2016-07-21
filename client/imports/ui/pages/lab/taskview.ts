@@ -75,7 +75,7 @@ export default class TaskView extends MeteorComponent {
   ngAfterViewInit(){  
     var slf = this;
     Meteor.call('prepareLab',"1", function(err,res){
-
+      console.log('here');
       //slf.labMarkdown = "# Sander \n ## are you sure this will work?";
       slf.tasks = res.taskList;
 
