@@ -61,11 +61,14 @@ export function prepLab(user : string, labId : string, callback : any) : any{
       var sshInfo = {host : nconf.get("domain_root"), pass: res.sshPass};
       var tasks = Collections.labs.findOne({_id: labId}).tasks;
       var finalTasks = tasks.map(function(task){
-        if(task._id <= res.taskNo){
-          return {title: task.name, md: task.md}; 
+        if(task._id < res.taskNo){
+          return {id:task._id,name: task.name, md: task.md, completed: true}; 
+        }
+        else if(task._id == res.taskNo){
+          return{id:task_id,name: task.name, md: task.md, completed: false
         }
         else{
-          return {title: task.name, md: null};
+          return {id: task._id,name: task.name, md: null,completed:false};
         }
       });
       callback(null,{sshInfo: sshInfo, taskList: finalTasks});
