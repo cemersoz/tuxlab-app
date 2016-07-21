@@ -44,9 +44,7 @@ Meteor.methods({
 	throw new Meteor.Error("Internal Service Error");
       }
       else{
-        console.log("got session");
         var nextAsync = Meteor.wrapAsync(res.next,res);
-        console.log("wrapped next");
 	try{
 	  var result = nextAsync();
 	  return "success"; //TODO: @Derek what to return here?

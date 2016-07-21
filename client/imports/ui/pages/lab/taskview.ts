@@ -15,7 +15,6 @@
   import { MATERIAL_PROVIDERS, MATERIAL_DIRECTIVES } from 'ng2-material';
   import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
 
-  import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
   import { MD_SIDENAV_DIRECTIVES } from '@angular2-material/sidenav';
   import { MD_TOOLBAR_DIRECTIVES } from '@angular2-material/toolbar';
   import { InjectUser } from 'angular2-meteor-accounts-ui';
