@@ -57,7 +57,7 @@ export default class TaskView extends MeteorComponent {
 
   ngAfterViewInit(){  
     var slf = this;
-    Meteor.call('prepareLab',"1","1", function(err,res){
+    Meteor.call('prepareLab',"1", function(err,res){
 
       //slf.labMarkdown = "# Sander \n ## are you sure this will work?";
       slf.labMarkdown = res.taskList[0].md;
@@ -70,6 +70,13 @@ export default class TaskView extends MeteorComponent {
       };
       slf.term.openTerminal(slf.auth);
       console.log("fired",err,res);
+    });
+  }
+  nextTask(){
+    console.log("proceeding");
+ 
+   Meteor.call('nextTask',"1",function(err,res){
+      console.log("yay");
     });
   }
 }

@@ -144,20 +144,33 @@ session.prototype.start = function(callback){
  */
 session.prototype.next = function(callback){
   var slf = this;
+
+  //check if currentTask is the last task
   if(this.lab.currentTask.isLast()){
     TuxLog.log("debug","trying to call nextTask on last task");
     callback("Internal error",null);
   }
-  this.lab.currentTask.verifyFn(slf.env).then(function(){
-                           slf.lab.currentTask = slf.lab.currentTask.next;
-                           slf.lab.currentTask.setupFn()
-                             .then(function(){
-                               slf.lab.taskNo += 1;
-			       callback(null,slf.parseTasks());})
-                         },
-			 function(err){
-			   callback(err,null);
-			 });
+
+  //if it is not the last task...
+  else{
+    console.log("in session.next, success case");
+    console.log(slf.lab.currentTask.verifyFn.toString());
+    slf.lab.currentTask.verifyFn(slf.env)
+      .then(function(){
+         slf.lab.currentTask = slf.lab.currentTask.next;
+         slf.lab.currentTask.setupFn(slf.env)
+           .then(function(){
+              slf.lab.taskNo += 1;
+	      callback(null,null);
+              },
+              function(err){
+                callback(err,null);
+              });
+        },
+        function(err){
+          callback(err,null);
+        });
+  }
 }
 
 /* end: verifies that last task is completed

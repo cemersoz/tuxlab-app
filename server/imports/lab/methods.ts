@@ -12,7 +12,7 @@ Meteor.methods({
    * callback: (err,pass)
    * implement loading wheel, md fetch, course record create in callback
    */
-  'prepareLab': function(user : string, labId : string){
+  'prepareLab': function(labId : string){
     TuxLog.log("warn","here");
     var uId = Meteor.user().profile.nickname;
     var sessionAsync = Meteor.wrapAsync(prepLab);
@@ -32,7 +32,8 @@ Meteor.methods({
      * change task markdown -frontend
      * change course records if passed
      */
-    var uId = Meteor.userId();
+    
+    var uId = Meteor.user().profile.nickname;
     SessionCache.get(uId,labId,function(err,res){
       if(err){
         TuxLog.log("warn",err);
@@ -43,7 +44,9 @@ Meteor.methods({
 	throw new Meteor.Error("Internal Service Error");
       }
       else{
-          var nextAsync = Meteor.wrapAsync(res.next,res);
+        console.log("got session");
+        var nextAsync = Meteor.wrapAsync(res.next,res);
+        console.log("wrapped next");
 	try{
 	  var result = nextAsync();
 	  return "success"; //TODO: @Derek what to return here?
