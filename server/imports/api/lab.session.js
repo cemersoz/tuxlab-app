@@ -98,27 +98,38 @@ session.prototype.start = function(callback){
   this.lab.taskNo = 1;
   this.lab.setup(this.env)
     .then(function(){ 
-       // slf.lab.tasks(this.env);
+        return new Promise(function(resolve,reject){
+          try{
+            slf.lab.tasks(this.env);
+            console.log("resolving");
+            resolve();
+          }
+          catch(e){
+            reject(e);
+          }
+        });
         callback(null);
       },
       function(err){
         TuxLog.log("warn","error during labfile_setup: "+err);
         callback("Internal Service Error")
       }
-    )
-    
+    )    
     .then(function(){
-        if(!this.lab.currentTask.next){
+        console.log("resolved");
+        if(!slf.lab.currentTask.next){
+          console.log("uh oh");
           TuxLog.log('warn','labfile tasks not properly chained at start');
           callback("Internal Service error");
         }
+
         else{
-          this.lab.currentTask = this.lab.currentTask.next;
-          console.log("no"+slf.lab.taskNo);
-          this.lab.currentTask.sFn().then(function(){console.log("no"+slf.lab.taskNo)}).then(function(){ 
-            console.log("no"+slf.lab.taskNo);
-            console.log("start");
-            callback(null); });
+          console.log("so far so good");
+          slf.lab.currentTask = slf.lab.currentTask.next;
+          console.log(slf.lab.currentTask.setupFn.toString());
+         
+          slf.lab.currentTask.setupFn(slf.env)
+            .then(callback(null));
         }
       }, 
       function(){
@@ -137,9 +148,9 @@ session.prototype.next = function(callback){
     TuxLog.log("debug","trying to call nextTask on last task");
     callback("Internal error",null);
   }
-  this.lab.currentTask.vFn().then(function(){
+  this.lab.currentTask.verifyFn(slf.env).then(function(){
                            slf.lab.currentTask = slf.lab.currentTask.next;
-                           slf.lab.currentTask.sFn()
+                           slf.lab.currentTask.setupFn()
                              .then(function(){
                                slf.lab.taskNo += 1;
 			       callback(null,slf.parseTasks());})

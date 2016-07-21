@@ -24,44 +24,6 @@ Meteor.methods({
       TuxLog.log("warn",e);
       throw new Meteor.Error(e);
     }
-    /*
-    var session = new LabSession();
-    var uId = Meteor.user().profile.nickname;
-    
-    //set asynchronous methods 
-    var sessionAsync = Meteor.wrapAsync(session.init,session);
-
-    try{
-      //run session.init get ssh info
-      var sessionRes = sessionAsync(uId,labId);
-      var sshInfo = {host: nconf.get("domain_root"), pass: sessionRes.sshPass}
-        
-      var optsp = {'fields': {
-          'labfile' : 0,
-          'lab_name': 0,
-          'course_id': 0,
-          'updated': 0,
-          'disabled': 0,
-          'hidden': 0            
-      }};
-      console.log(session.lab.taskNo);
-      var tasks = Collections.labs.findOne({_id: labId}).tasks;
-      var finalTasks = tasks.map(function(task){
-        if(task._id <= sessionRes.taskNo){
-          return {title: task.name, md: task.md}; 
-        }
-        else{
-          return {title: task.name, md: null};
-        }
-      });
-      console.log(sessionRes.taskNo);
-      var result = {sshInfo: sshInfo, taskList: finalTasks};
-      return result;
-    }
-    catch(e){
-      TuxLog.log("warn",new Meteor.Error(e));
-      throw new Meteor.Error(e);
-    }*/
   },
   'nextTask': function(labId : string){
     /**session.next(cb)
