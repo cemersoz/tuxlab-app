@@ -12,7 +12,7 @@
   import { MeteorComponent } from 'angular2-meteor';
   import { OVERLAY_PROVIDERS } from '@angular2-material/core/overlay/overlay';
   import { MATERIAL_PROVIDERS, MATERIAL_DIRECTIVES } from 'ng2-material';
-	import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
+  import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
 
   import { InjectUser } from 'angular2-meteor-accounts-ui';
 
@@ -62,7 +62,6 @@ export default class TaskView extends MeteorComponent {
       //slf.labMarkdown = "# Sander \n ## are you sure this will work?";
       slf.labMarkdown = res.taskList[0].md;
 
-      console.log(slf.labMarkdown);
       slf.auth = {
         username: Meteor.user().profile.nickname,
         password: res.sshInfo.pass,

@@ -108,7 +108,6 @@ session.prototype.start = function(callback){
             reject(e);
           }
         });
-        callback(null);
       },
       function(err){
         TuxLog.log("warn","error during labfile_setup: "+err);
