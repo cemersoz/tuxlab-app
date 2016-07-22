@@ -124,7 +124,8 @@ export function verify(uId : string, labId : string, callback : any) : void{
 }
 export function next(uId : string,labId : string, callback : any) : void{
   SessionCache.get(uId, labId, function(err,result){
-    if(err){
+    
+  if(err){
       //err logged in server/imports/startup/cache.js:51
       callback(err,null);
     }
