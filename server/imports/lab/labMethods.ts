@@ -44,7 +44,7 @@ function mapTasks(labId : string,taskNo : number, callback) : any {
   
   //Pull tasks of lab from database
   var tasks = Collections.labs.findOne({_id : labId}).tasks;
-
+  
   //map tasks according to frontend schema
   var finalTasks = tasks.map(function(task){
     if(task._id < taskNo){
@@ -90,7 +90,7 @@ export function prepLab(user : string, labId : string, callback : any) : any{
           //cannot have an error
           callback(err,null);
         }
-        els{
+        else{
           callback(null,{sshInfo: sshInfo, taskList: res});
         }
       });
@@ -98,6 +98,30 @@ export function prepLab(user : string, labId : string, callback : any) : any{
   });
 }
 
+export function verify(uId : string, labId : string, callback : any) : void{
+  SessionCache.get(uId, labId, function(err,result){
+    if(err){
+      //err logged in server/imports/startup/cache.js:51
+      callback(err,null);
+    }
+    else if(!result){
+      TuxLog.log("warn",new Meteor.Error("Session.get returned no result for session in use"));
+      callback(new Meteor.Error("Session.get returned no result for session in use"),null);
+    }
+    else{
+      result.verify(function(succ){
+        if(!succ){
+          callback(null,false));
+	}
+	else{
+          callback(null,true);    
+	}
+      })
+    }
+  });
+
+
+}
 export function next(uId : string,labId : string, callback : any) : void{
   SessionCache.get(uId, labId, function(err,result){
     if(err){

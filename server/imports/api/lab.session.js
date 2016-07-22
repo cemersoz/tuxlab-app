@@ -34,7 +34,6 @@ session.prototype.init = function(user,labId,callback){
       else if(typeof value === "undefined"){
         // Get LabFile from Database
         var labfile_data = Collections.labs.findOne({_id: labId}, {fields : {'field' : 0}});
-        console.log(labfile_data.labfile);
         var Lab = eval(labfile_data.labfile);
         Lab.taskNo = 0;
         slf.lab = Lab;
@@ -118,7 +117,7 @@ session.prototype.start = function(callback){
     )    
     .then(function(){
         if(!slf.lab.currentTask.next){
-          TuxLog.log('warn','labfile tasks not properly chained at start');
+          TuxLog.log('warn',new Error('labfile tasks not properly chained at start'));
           callback(new Error("labfile task chaining error"));
         }
 
@@ -136,6 +135,12 @@ session.prototype.start = function(callback){
       });
 }
 
+
+session.prototype.verify = function(callback){
+  
+  slf.lab.currentTask.verifyFn(slf.env)
+    .then(callback(true),callback(false));
+}
 /* next: verifies that task is completed
  * moves on to next task and runs callback(null,parseTasks) if completed
  * runs callback(err,null) -err from verify- if not
