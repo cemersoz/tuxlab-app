@@ -14,17 +14,8 @@ var env = function(){
 	  host: nconf.get('swarm_node_ip'),
 	  port: nconf.get('swarm_node_port')
   }
-/*
-  var etcd_auth = {
-          user: nconf.get('etcd_user'),
-          pass: nconf.get('etcd_pass')
-  };
-  var etcd_address = nconf.get('etcd_node_ip')+':'+nconf.get('etcd_node_port');
-  this.etcd = new Etcd(etcd_address,etcd_auth);
-  */
   this.docker = new dockerode(docker_settings);
   this.root_dom = nconf.get('domain_root');
-  console.log(this.root_dom);
 }
 
 //environment variables

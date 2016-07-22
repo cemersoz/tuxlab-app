@@ -90,7 +90,7 @@ export function prepLab(user : string, labId : string, callback : any) : any{
           //cannot have an error
           callback(err,null);
         }
-        els{
+        else{
           callback(null,{sshInfo: sshInfo, taskList: res});
         }
       });

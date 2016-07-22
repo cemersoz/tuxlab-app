@@ -34,7 +34,6 @@ session.prototype.init = function(user,labId,callback){
       else if(typeof value === "undefined"){
         // Get LabFile from Database
         var labfile_data = Collections.labs.findOne({_id: labId}, {fields : {'field' : 0}});
-        console.log(labfile_data.labfile);
         var Lab = eval(labfile_data.labfile);
         Lab.taskNo = 0;
         slf.lab = Lab;
