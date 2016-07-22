@@ -44,7 +44,7 @@ function mapTasks(labId : string,taskNo : number, callback) : any {
   
   //Pull tasks of lab from database
   var tasks = Collections.labs.findOne({_id : labId}).tasks;
-
+  
   //map tasks according to frontend schema
   var finalTasks = tasks.map(function(task){
     if(task._id < taskNo){

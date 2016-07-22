@@ -116,8 +116,9 @@ session.prototype.start = function(callback){
       }
     )    
     .then(function(){
+        console.log("resolved");
         if(!slf.lab.currentTask.next){
-          TuxLog.log('warn','labfile tasks not properly chained at start');
+          TuxLog.log('warn',new Error('labfile tasks not properly chained at start'));
           callback(new Error("labfile task chaining error"));
         }
 
