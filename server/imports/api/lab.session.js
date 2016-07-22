@@ -160,7 +160,8 @@ session.prototype.next = function(callback){
          slf.lab.currentTask.setupFn(slf.env)
            .then(function(){
               slf.lab.taskNo += 1;
-	      callback(null,null);
+              console.log("all is well",slf.lab.taskNo);
+	      callback(null,slf.lab.taskNo);
               },
               function(err){
                 callback(err,null);

@@ -1,11 +1,16 @@
+
+//variable declarations
 declare var Collections : any;
-var LabSession = require('../api/lab.session.js');
 declare var TuxLog : any;
 declare var SessionCache : any;
 declare var nconf : any;
+
+//import session constructor
 var LabSession = require('../api/lab.session.js');
 
-import{ prepLab } from './labMethods.ts';
+//import sync Meteor methods
+import{ prepLab, next } from './labMethods.ts';
+
 Meteor.methods({
   /**prepareLab: prepares a labExec object for the current user
    * takes the id of the lab and a callback as parameter
@@ -34,27 +39,15 @@ Meteor.methods({
      */
     
     var uId = Meteor.user().profile.nickname;
-    SessionCache.get(uId,labId,function(err,res){
-      if(err){
-        TuxLog.log("warn",err);
-	throw new Meteor.Error("Internal Service Error");
-      }
-      else if(!res){
-        TuxLog.log("warn",new Meteor.Error("SessionCache.get failed to return a session instance"));
-	throw new Meteor.Error("Internal Service Error");
-      }
-      else{
-        var nextAsync = Meteor.wrapAsync(res.next,res);
-	try{
-	  var result = nextAsync();
-	  return "success"; //TODO: @Derek what to return here?
-	}
-	catch(e){
-	  TuxLog.log("warn",e);
-	  throw new Meteor.Error("Internal Service Error");
-	}
-      }
-    });
+    var nextAsync = Meteor.wrapAsync(next);
+    try{
+      var res = nextAsync(uId,labId);
+      return res;
+    }
+    catch(e){
+      TuxLog.log(e);
+      throw new Meteor.Error("Internal Service Error");
+    }
   },
   'endLab': function(labId : string){
     /**session.end(cb)

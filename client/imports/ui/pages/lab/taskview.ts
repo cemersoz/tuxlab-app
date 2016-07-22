@@ -78,22 +78,31 @@ export default class TaskView extends MeteorComponent {
       console.log('here');
       //slf.labMarkdown = "# Sander \n ## are you sure this will work?";
       slf.tasks = res.taskList;
-
+      slf.toTask(slf.tasks[0]);
       slf.auth = {
         username: Meteor.user().profile.nickname,
         password: res.sshInfo.pass,
         domain: "10.100.1.11"
       };
+      console.log("here");
       slf.term.openTerminal(slf.auth);
       console.log("fired",err,res);
     });
   }
   nextTask(){
     console.log("proceeding");
- 
-   Meteor.call('nextTask',"1",function(err,res){
-      console.log("yay");
-    });
+    var slf = this;
+     Meteor.call('nextTask',"1",function(err,res){
+       if(err){
+         console.log("try again");
+       }
+       else{
+         console.log(res);
+         slf.tasks = res.taskList
+         slf.toTask(slf.tasks[res.taskNo-1]);
+       }
+       console.log("yay");
+     });
   }
   toTask(task) {
     this.labMarkdown = task.md;
