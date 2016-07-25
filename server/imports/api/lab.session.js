@@ -148,6 +148,7 @@ session.prototype.verify = function(callback){
   var slf = this;
   slf.lab.currentTask.verifyFn(slf.env,slf.student)
     .then(callback({verified: true, taskUpdates: slf.taskUpdates}),callback({verified: false,taskUpdates: slf.taskUpdates}));
+  
 }
 /* next: verifies that task is completed
  * moves on to next task and runs callback(null,parseTasks) if completed
