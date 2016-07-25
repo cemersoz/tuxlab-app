@@ -107,10 +107,10 @@ export default class TaskView extends MeteorComponent {
       }
       else{
         if(res.verified){
-	  nextButton = true;
+	  slf.nextButton = true;
 	}
 	else{
-	  nextButton = false;
+	  slf.nextButton = false;
 	}
         slf.taskUpdates = res.taskUpdates;
       }
