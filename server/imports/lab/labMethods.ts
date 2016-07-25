@@ -4,7 +4,7 @@ declare var TuxLog : any;
 declare var nconf : any;
 declare var Collections : any;
 
-function getSession(user : string, labId : string, callback : any) : void{
+function getSession(user : string, userId, labId : string, callback : any) : void{
   SessionCache.get(user,labId,function(err,res){
     if(err){
       //error logged in server/imports/startup/cache.js:51
@@ -12,7 +12,7 @@ function getSession(user : string, labId : string, callback : any) : void{
     }
     else if(!res){
       var session = new LabSession();
-      session.init(user, labId, function(err,result){
+      session.init(user, userId,labId, function(err,result){
         if(err){
           //error logged in server/imports/api/lab.session.js .init
           callback(err,null);
@@ -61,10 +61,10 @@ function mapTasks(labId : string,taskNo : number, callback) : any {
   //callback on mapped tasks
   callback(null,finalTasks);
 }
-export function prepLab(user : string, labId : string, callback : any) : any{
+export function prepLab(user : string,userId: string, labId : string, callback : any) : any{
   
   //get Session instance for user/lab	
-  getSession(user, labId, function(err,res){
+  getSession(user, userId,labId, function(err,res){
     if(err){
       //errors logged in getSession above
       callback(err,null);
