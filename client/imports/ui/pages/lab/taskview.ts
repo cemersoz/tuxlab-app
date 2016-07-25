@@ -67,7 +67,7 @@ export default class TaskView extends MeteorComponent {
   constructor() {
     super();
     this.taskUpdates = [];
-
+    this.nextButton = false;
     this.tasks = [
       { id: 1, name: "Task 1", completed: true, md: "# Task 1" },
       { id: 2, name: "Task 2", completed: true, md: "# Task 2" },
@@ -123,6 +123,7 @@ export default class TaskView extends MeteorComponent {
     var slf = this;
      Meteor.call('nextTask',"1",function(err,res){
        if(err){
+	 slf.nextButton = false;
          console.log("try again");
        }
        else{
