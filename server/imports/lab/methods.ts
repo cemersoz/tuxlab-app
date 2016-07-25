@@ -18,10 +18,11 @@ Meteor.methods({
    * implement loading wheel, md fetch, course record create in callback
    */
   'prepareLab': function(labId : string){
-    var uId = Meteor.user().profile.nickname;
+    var user = Meteor.user().profile.nickname;
+    var uId = Meteor.userId();
     var sessionAsync = Meteor.wrapAsync(prepLab);
     try{
-      var res = sessionAsync(uId,labId);
+      var res = sessionAsync(user,uId,labId);
       return res;
     }
     catch(e){

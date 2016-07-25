@@ -4,7 +4,7 @@ declare var TuxLog : any;
 declare var nconf : any;
 declare var Collections : any;
 
-function getSession(user : string, labId : string, callback : any) : void{
+function getSession(user : string, userId, labId : string, callback : any) : void{
   SessionCache.get(user,labId,function(err,res){
     if(err){
       //error logged in server/imports/startup/cache.js:51
@@ -12,7 +12,7 @@ function getSession(user : string, labId : string, callback : any) : void{
     }
     else if(!res){
       var session = new LabSession();
-      session.init(user, labId, function(err,result){
+      session.init(user, userId,labId, function(err,result){
         if(err){
           //error logged in server/imports/api/lab.session.js .init
           callback(err,null);
@@ -33,7 +33,7 @@ function getSession(user : string, labId : string, callback : any) : void{
         }
         else{
           console.log(result);
-          callback(null,{taskNo:res.lab.taskNo,sshPass:result});
+          callback(null,{taskNo:res.lab.taskNo,sshPass:result,taskUpdates: res.taskUpdates});
         }
       })
     }
@@ -61,10 +61,10 @@ function mapTasks(labId : string,taskNo : number, callback) : any {
   //callback on mapped tasks
   callback(null,finalTasks);
 }
-export function prepLab(user : string, labId : string, callback : any) : any{
+export function prepLab(user : string,userId: string, labId : string, callback : any) : any{
   
   //get Session instance for user/lab	
-  getSession(user, labId, function(err,res){
+  getSession(user, userId,labId, function(err,res){
     if(err){
       //errors logged in getSession above
       callback(err,null);
@@ -83,6 +83,7 @@ export function prepLab(user : string, labId : string, callback : any) : any{
 
       //parse sshInfo from nconf and results
       var sshInfo = {host : nconf.get("domain_root"), pass: res.sshPass};
+      var taskUpdates = res.taskUpdates;
       //map taskList into frontend schema
       mapTasks(labId,res.taskNo,function(err,res){
         if(err){
@@ -90,7 +91,7 @@ export function prepLab(user : string, labId : string, callback : any) : any{
           callback(err,null);
         }
         else{
-          callback(null,{sshInfo: sshInfo, taskList: res});
+          callback(null,{sshInfo: sshInfo, taskList: res, taskUpdates: taskUpdates});
         }
       });
     }
@@ -108,14 +109,7 @@ export function verify(uId : string, labId : string, callback : any) : void{
       callback(new Meteor.Error("Session.get returned no result for session in use"),null);
     }
     else{
-      result.verify(function(succ){
-        if(!succ){
-          callback(null,false);
-	}
-	else{
-          callback(null,true);    
-	}
-      })
+      result.verify(callback);
     }
   });
 
@@ -146,7 +140,7 @@ export function next(uId : string,labId : string, callback : any) : void{
               callback(err,null);
             }
             else{ 
-              callback(null,{taskList: ress, taskNo:res});
+              callback(null,{taskList: ress, taskNo:res, taskUpdates:result.taskUpdates});
             }
           });
         }
