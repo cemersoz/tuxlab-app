@@ -98,9 +98,34 @@ export function prepLab(user : string, labId : string, callback : any) : any{
   });
 }
 
-export function next(uId : string,labId : string, callback : any) : void{
+export function verify(uId : string, labId : string, callback : any) : void{
   SessionCache.get(uId, labId, function(err,result){
     if(err){
+      //err logged in server/imports/startup/cache.js:51
+      callback(err,null);
+    }
+    else if(!result){
+      TuxLog.log("warn",new Meteor.Error("Session.get returned no result for session in use"));
+      callback(new Meteor.Error("Session.get returned no result for session in use"),null);
+    }
+    else{
+      result.verify(function(succ){
+        if(!succ){
+          callback(null,false));
+	}
+	else{
+          callback(null,true);    
+	}
+      })
+    }
+  });
+
+
+}
+export function next(uId : string,labId : string, callback : any) : void{
+  SessionCache.get(uId, labId, function(err,result){
+    
+  if(err){
       //err logged in server/imports/startup/cache.js:51
       callback(err,null);
     }

@@ -116,7 +116,6 @@ session.prototype.start = function(callback){
       }
     )    
     .then(function(){
-        console.log("resolved");
         if(!slf.lab.currentTask.next){
           TuxLog.log('warn',new Error('labfile tasks not properly chained at start'));
           callback(new Error("labfile task chaining error"));
@@ -136,6 +135,12 @@ session.prototype.start = function(callback){
       });
 }
 
+
+session.prototype.verify = function(callback){
+  
+  slf.lab.currentTask.verifyFn(slf.env)
+    .then(callback(true),callback(false));
+}
 /* next: verifies that task is completed
  * moves on to next task and runs callback(null,parseTasks) if completed
  * runs callback(err,null) -err from verify- if not
