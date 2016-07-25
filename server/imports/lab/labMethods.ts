@@ -83,7 +83,6 @@ export function prepLab(user : string, labId : string, callback : any) : any{
 
       //parse sshInfo from nconf and results
       var sshInfo = {host : nconf.get("domain_root"), pass: res.sshPass};
-
       //map taskList into frontend schema
       mapTasks(labId,res.taskNo,function(err,res){
         if(err){
@@ -111,7 +110,7 @@ export function verify(uId : string, labId : string, callback : any) : void{
     else{
       result.verify(function(succ){
         if(!succ){
-          callback(null,false));
+          callback(null,false);
 	}
 	else{
           callback(null,true);    
@@ -132,7 +131,7 @@ export function next(uId : string,labId : string, callback : any) : void{
 
     else if(!result){
       TuxLog.log("warn",new Meteor.Error("Session.get returned no result for session in use"));
-      callback(new Meteor.Error("Session.get returned no result for session in use"))
+      callback(new Meteor.Error("Session.get returned no result for session in use"));
     }
     else{
       result.next(function(err,res){
@@ -146,8 +145,8 @@ export function next(uId : string,labId : string, callback : any) : void{
               //cannot have an error
               callback(err,null);
             }
-            else{
-              callback(null,{taskList: ress, taskNo:res})
+            else{ 
+              callback(null,{taskList: ress, taskNo:res});
             }
           });
         }
