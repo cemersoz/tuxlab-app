@@ -1,3 +1,6 @@
+//import async
+async = require('async')
+
 // Load Variables
 import './settings.js'
 
@@ -16,4 +19,3 @@ import './methods.js'
 // Start Cache
 import './cache.js'
 
-async = require('async')

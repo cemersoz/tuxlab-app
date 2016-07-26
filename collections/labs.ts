@@ -51,7 +51,7 @@ labs.allow({
         },
         course_id: {
           type: String,
-          /*regEx: SimpleSchema.RegEx.Id,*/
+          regEx: SimpleSchema.RegEx.Id,
           custom: function() {
             let currentCourse = Collections.courses.findOne({ _id: this.value });
             let instructors = currentCourse.instructor_ids;
@@ -105,11 +105,11 @@ labs.allow({
 	else if(!doc.file){ //check if lab object has a file
 	  TuxLog.log("warn",new Meteor.Error("lab object has no labfile"));
 	  throw new Meteor.Error("lab object has no labfile");
-	}/*
+	}
 	else if(!Roles.isInstructorFor(doc.course_id,userid)){
 	  TuxLog.log("warn",new Meteor.Error("This user is not an instructor for this course"));
 	  throw new Meteor.Error("This user is not an instructor for this course");
-	}*/
+	}
 	else{ //lab object is valid,validating labfile
           var labfile = doc.file;
 	  if(!validateLab(labfile)){
