@@ -98,7 +98,7 @@ export default class TaskView extends MeteorComponent {
     });
   }
 
-  //called by the check button, I'm already calling this
+  // Called by Check button
   verify(){
     Meteor.call('verifyTask',"1",function(err,res){
       var slf = this;
@@ -117,7 +117,7 @@ export default class TaskView extends MeteorComponent {
     });
   }
 
-  //TODO: @Sander call this from a new button, only shown when nextButton == true
+  // Called by Next button
   nextTask(){
     console.log("proceeding");
     var slf = this;

@@ -3,7 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from './users.ts';
 
 declare var _ : any;
-var _ = require('underscore');
 
 declare var validateLab : any;
 
@@ -28,8 +27,6 @@ labs.allow({
   declare var SimpleSchema: any;
   declare var Collections: any;
   declare var TuxLog: any;
-  declare var _: any;
-  var _ = require('underscore');
 
   if (Meteor.isServer){
     Meteor.startup(function(){
@@ -54,7 +51,7 @@ labs.allow({
         },
         course_id: {
           type: String,
-          regEx: SimpleSchema.RegEx.Id,
+          /*regEx: SimpleSchema.RegEx.Id,*/
           custom: function() {
             let currentCourse = Collections.courses.findOne({ _id: this.value });
             let instructors = currentCourse.instructor_ids;
@@ -100,22 +97,44 @@ labs.allow({
   if(Meteor.isServer){
   var validateLab : any = require('../server/imports/lab/checkLab.js');
     Meteor.startup(function(){
-      var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){return true;
- /*       if (typeof fieldNames === "undefined"){ 
+      var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){
+        if(!doc.course_id){ //check if lab object has a course_id
+          TuxLog.log("warn",new Meteor.Error("lab object has no course_id"));
+	  throw new Meteor.Error("lab object has no course_id");
+	}
+	else if(!doc.file){ //check if lab object has a file
+	  TuxLog.log("warn",new Meteor.Error("lab object has no labfile"));
+	  throw new Meteor.Error("lab object has no labfile");
+	}/*
+	else if(!Roles.isInstructorFor(doc.course_id,userid)){
+	  TuxLog.log("warn",new Meteor.Error("This user is not an instructor for this course"));
+	  throw new Meteor.Error("This user is not an instructor for this course");
+	}*/
+	else{ //lab object is valid,validating labfile
+          var labfile = doc.file;
+	  if(!validateLab(labfile)){
+            TuxLog.log("warn",new Meteor.Error("labfile failed the validator"));
+            throw new Meteor.Error("labfile failed the validator");
+	  }
+	  else{
+            doc.updated = Date.now();
+	    return true;
+          }
+	}
+      }
+      var updateValidator = function(){}/*
+	if (typeof fieldNames === "
+        if (typeof fieldNames === "undefined"){ 
           if(!(doc.course_id && doc.file && //check for lab fields
              Roles.isInstructorFor(doc.course_id,userid))){//check for instructor authorization
-        	   return false;
-        	}
+               throw new Meteor.Error("OH NO!");	
+	     }
         	else{
-      	    var titleList = validateLab(doc.file);
-      	    if(!titleList){
-                    return false; }
-      	    else{
-                    return titleList;
+		  return true;
       	    }
       	  }
 
-        }
+        
       	else if(fieldNames.includes('tasks') && !fieldNames.includes('file')){
                 return false;
       	}
@@ -129,17 +148,16 @@ labs.allow({
       	    doc.updated = Date.now();
       	  }
       	}*/
-      }
+     
       labs.before.update(LabValidator);
       labs.before.insert(LabValidator);
     });
   }
-
 /* INJECT LAB INTO COURSE */
   if(Meteor.isServer){
     Meteor.startup(function(){
       labs.after.insert(function(userid, doc){
-        Collections.courses.update(doc.course_id,{ $push : { 'labs' : doc._id}}, function(err, num){
+        Collections.courses.update({_id:doc.course_id},{ $push : { 'labs' : doc._id}}, function(err, num){
           if(err){
             TuxLog.log('warn', err);
           }
