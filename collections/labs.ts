@@ -122,34 +122,18 @@ labs.allow({
           }
 	}
       }
-      var updateValidator = function(){}/*
-	if (typeof fieldNames === "
-        if (typeof fieldNames === "undefined"){ 
-          if(!(doc.course_id && doc.file && //check for lab fields
-             Roles.isInstructorFor(doc.course_id,userid))){//check for instructor authorization
-               throw new Meteor.Error("OH NO!");	
-	     }
-        	else{
-		  return true;
-      	    }
-      	  }
-
-        
-      	else if(fieldNames.includes('tasks') && !fieldNames.includes('file')){
-                return false;
-      	}
-      	else if(fieldNames.includes('file')){
-      	  if(!((Roles.isInstructorFor(doc.course_id, userid)) && //check for instructor authorization
-      		  validateLab(modifier.$set.file))){  //check for labfile errors
-      	    return false;
-      	  }
-      	  else{
-      	    if(modifier) {modifier.$set.updated = Date.now(); }
-      	    doc.updated = Date.now();
-      	  }
-      	}*/
+      var updateValidator = function(userid, doc, fieldNames, modifier, options?){
+        if(typeof fieldNames === "undefined"){
+	  throw new Meteor.Error("updated doesn't change any fields");
+	}
+	else{
+	  var newDoc = _.extend(doc,modifier.$set);
+	  modifier.$set.updated = Date.now();
+	  return LabValidator(userid,newDoc);
+	}
+      }
      
-      labs.before.update(LabValidator);
+      labs.before.update(updateValidator);
       labs.before.insert(LabValidator);
     });
   }
