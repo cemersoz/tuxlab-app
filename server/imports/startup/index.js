@@ -15,3 +15,5 @@ import './methods.js'
 
 // Start Cache
 import './cache.js'
+
+async = require('async')

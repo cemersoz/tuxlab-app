@@ -100,8 +100,8 @@ labs.allow({
   if(Meteor.isServer){
   var validateLab : any = require('../server/imports/lab/checkLab.js');
     Meteor.startup(function(){
-      var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){
-        if (typeof fieldNames === "undefined"){
+      var LabValidator = function(userid, doc, fieldNames?, modifier?, options?){return true;
+ /*       if (typeof fieldNames === "undefined"){ 
           if(!(doc.course_id && doc.file && //check for lab fields
              Roles.isInstructorFor(doc.course_id,userid))){//check for instructor authorization
         	   return false;
@@ -128,7 +128,7 @@ labs.allow({
       	    if(modifier) {modifier.$set.updated = Date.now(); }
       	    doc.updated = Date.now();
       	  }
-      	}
+      	}*/
       }
       labs.before.update(LabValidator);
       labs.before.insert(LabValidator);

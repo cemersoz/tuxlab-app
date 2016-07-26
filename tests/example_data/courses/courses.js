@@ -4,8 +4,19 @@
 
 module.exports = [
   {
+	_id: "1",
   	course_number: '15-131',
   	course_name: 'Great Practical Ideas for Computer Scientists',
+	instructors: [
+          {
+	    name: "Derek Brown",
+	    id: "1"
+	  },
+	  {
+	    name: "Tom Cortina",
+	    id: "2"
+	  }
+	],
   	course_description: {
   		content: `
         Throughout your education as a Computer Scientist at Carnegie Mellon,
@@ -17,15 +28,30 @@ module.exports = [
       `,
   		syllabus: 'The syllabus is here.'
   	},
-  	instructor_ids: [],
+	permissions:{
+	  meta : true,
+	  content: "any",
+	  enroll: "any"
+	},
   	hidden: false,
   	disabled: false,
   	featured: true,
-  	labs: []
+  	labs: ["1"]
   },
   {
+	_id : "2",
   	course_number: '15-112',
   	course_name: 'Fundamentals of Programming',
+	instructors: [
+	  {
+	    name: "Aaron Mortenson",
+	    id: "3"
+	  },
+	  {
+	    name: "Cem Ersoz",
+	    id: "4"
+	  }
+	],
   	course_description: {
   		content: `
         A technical introduction to the fundamentals of programming with an
@@ -39,15 +65,30 @@ module.exports = [
       `,
   		syllabus: 'The syllabus is here.'
   	},
-  	instructor_ids: [],
+	permissions:{
+	  meta: true,
+	  content: "auth",
+	  enroll: "none"
+        },
   	hidden: false,
   	disabled: false,
   	featured: true,
-  	labs: []
+  	labs: ["2","3"]
   },
   {
+	_id: "3",
   	course_number: '15-122',
   	course_name: 'Principles of Imperative Computation',
+	instructors: [
+	  {
+	    name: "Tom Cortina",
+	    id: "2"
+	  },
+	  {
+	    name: "Sander Shi",
+	    id: "5"
+	  }
+	],
   	course_description: {
   		content: `
         This course teaches imperative programming and methods for ensuring the
@@ -61,15 +102,30 @@ module.exports = [
       `,
   		syllabus: 'The syllabus is here.'
   	},
-  	instructor_ids: [],
+	permissions: {
+	  meta: true,
+	  content: "any",
+	  enroll: "any"
+	},
   	hidden: false,
   	disabled: false,
   	featured: true,
-  	labs: []
+  	labs: ["4"]
   },
   {
+	_id: "4",
     	course_number: '15-150',
     	course_name: 'Principles of Functional Programming',
+	instructors: [
+	  {
+	    name: "Cem Ersoz",
+	    id: "4"
+	  },
+	  {
+	    name: "Pikanchu Bansal",
+	    id: "6"
+	  }
+	],
     	course_description: {
     		content: `
           Upon completion of this course, students will have acquired a mastery of
@@ -80,15 +136,26 @@ module.exports = [
         `,
     		syllabus: 'The syllabus is here.'
     	},
-    	instructor_ids: [],
+	permissions:{
+	  meta: true,
+	  content: "any",
+	  enroll: "none"
+	},
     	hidden: false,
     	disabled: false,
     	featured: true,
     	labs: []
   },
   {
+	_id: "5",
   	course_number: '15-251',
   	course_name: 'Great Theoretical Ideas for Computer Scientists',
+	instructors: [
+	  {
+	    name: "Aaron Mortenson",
+	    id: "3"
+	  }
+	],
   	course_description: {
   		content: `
         This course is about how to use theoretical ideas to formulate and solve
@@ -101,7 +168,11 @@ module.exports = [
       `,
   		syllabus: 'The syllabus is here.'
   	},
-  	instructor_ids: [],
+	permissions:{
+	  meta: true,
+	  content: "any",
+	  enroll: "any"
+	},
   	hidden: false,
   	disabled: false,
   	featured: true,
