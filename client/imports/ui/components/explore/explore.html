@@ -7,12 +7,16 @@
       <template md-tab-content>
         <md-content class="md-padding">
           <h2>{{ course.course_number }} | {{ course.course_name }}</h2>
-          <p>{{ course.instructor_name }}</p>
+          <p *ngFor="let instructor of course.instructors" class="instructors">
+            {{ instructor.name }}
+          </p>
+          <br><br>
           <p>
             {{ course.course_description.content }}
           </p>
           <div class="course-link">
-            <a md-button [routerLink]="['/course/' + course._id]">Enroll</a>
+            <a md-button [routerLink]="['/course/' + course._id]" *ngIf="course.permissions.content == 'auth'">Enroll</a>
+            <a md-button [routerLink]="['/course/' + course._id]" *ngIf="course.permissions.content == 'any'" >View</a>
           </div>
         </md-content>
       </template>

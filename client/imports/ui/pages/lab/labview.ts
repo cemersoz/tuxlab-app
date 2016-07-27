@@ -5,9 +5,9 @@
   import 'zone.js/dist/zone';
 
 // Angular Imports
-  import { ViewChild, Component, ViewEncapsulation, provide, Input } from '@angular/core';
+  import { ViewChild, Component, ViewEncapsulation, provide, Input, OnInit } from '@angular/core';
   import { bootstrap } from 'angular2-meteor-auto-bootstrap';
-  import { ROUTER_DIRECTIVES } from '@angular/router';
+  import { ROUTER_DIRECTIVES, ActivatedRoute, Router } from '@angular/router';
 
 // Angular Material Imports
   import { MeteorComponent } from 'angular2-meteor';
@@ -28,11 +28,11 @@
 
 // Meteor method imports
   import "../../../lab/methods.ts"
-// Define TaskView Component
-
+  
+// Define LabView Component
 @Component({
-  selector: 'tuxlab-taskview',
-  templateUrl: '/client/imports/ui/pages/lab/taskview.html',
+  selector: 'tuxlab-labview',
+  templateUrl: '/client/imports/ui/pages/lab/labview.html',
   directives: [
     MarkdownView,
     Terminal,
@@ -49,33 +49,28 @@
 })
 
 @InjectUser('user')
-export default class TaskView extends MeteorComponent {
+export default class LabView extends MeteorComponent {
   user: Meteor.User;
   public auth : any;
   labMarkdown: string;
+  updateMarkdown: string;
   taskName: string = "Task Name Here";
   labProgress: string = "3 / 10";
-  tasks: Array<any>;
+  tasks: Array<any> = [];
   currentTask: number;
   currentCompleted: boolean;
   courseId: string;
   nextButton : boolean;
-  taskUpdates : Array<string>
+  taskUpdates : Array<string> = [];
   @ViewChild(Terminal) term : Terminal;
 
 
-  constructor() {
+  constructor(private route: ActivatedRoute, private router: Router) {
     super();
     this.taskUpdates = [];
     this.nextButton = false;
-    this.tasks = [
-      { id: 1, name: "Task 1", completed: true, md: "# Task 1" },
-      { id: 2, name: "Task 2", completed: true, md: "# Task 2" },
-      { id: 3, name: "Task 3", completed: true, md: "# Task 3" },
-      { id: 4, name: "Task 4", completed: false, md: "# Task 4" },
-      { id: 5, name: "Task 5", completed: true, md: "# Task 5" },
-      { id: 6, name: "Task 6", completed: false, md: "# Task 6" },
-    ];
+    
+    document.getElementById('course-content').style.maxWidth = "100%";
   }
 
   ngAfterViewInit(){
@@ -98,7 +93,7 @@ export default class TaskView extends MeteorComponent {
     });
   }
 
-  //called by the check button, I'm already calling this
+  // Called by Check button
   verify(){
     Meteor.call('verifyTask',"1",function(err,res){
       var slf = this;
@@ -117,28 +112,45 @@ export default class TaskView extends MeteorComponent {
     });
   }
 
-  //TODO: @Sander call this from a new button, only shown when nextButton == true
+  // Called by Next button
   nextTask(){
     console.log("proceeding");
     var slf = this;
-     Meteor.call('nextTask',"1",function(err,res){
-       if(err){
-	 slf.nextButton = false;
-         console.log("try again");
-       }
-       else{
-         console.log(res);
-         slf.tasks = res.taskList
-         slf.toTask(slf.tasks[res.taskNo-1]);
-	 slf.labProgress = res.taskNo+" / "+slf.tasks.length
-	 slf.taskUpdates = res.taskUpdates
-       }
-     });
+      Meteor.call('nextTask',"1",function(err,res){
+        if(err){
+          slf.nextButton = false;
+          console.log("try again");
+        }
+        else{
+          console.log(res);
+          slf.tasks = res.taskList
+          slf.toTask(slf.tasks[res.taskNo-1]);
+          slf.labProgress = res.taskNo+" / "+slf.tasks.length
+          slf.taskUpdates = res.taskUpdates
+        }
+      });
   }
   toTask(task) {
     this.labMarkdown = task.md;
+    this.updateMarkdown = task.update;
     this.currentTask = task.id;
     this.currentCompleted = task.completed;
+  }
+  
+  // Check and join tasks and taskupdates
+  joinTaskUpdate() {
+    if(this.tasks.length === this.taskUpdates.length) {
+      for(let i = 0; i < this.tasks.length; i++) {
+        this.tasks[i].update = this.taskUpdates[i];
+      }
+    }
+    else {
+      throw new Error("Tasks to not match task updates");
+    }
+  }
+  
+  ngOnInit() {
+    this.courseId = this.router.routerState.parent(this.route).snapshot.params['courseid'];
   }
 
 }

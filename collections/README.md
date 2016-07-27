@@ -28,7 +28,15 @@ The following document describes the MongoDB Schema used by the TuxLab app:
     'administrator': ['global'],
     'instructor' : ['574465a21109160b518a4291'], // Array of IDs to Courses
     'student': [['574465a21109160b518a4299','574467bc1109160b518a429d']] // Array of Tuples of {CourseID, CourseRecordID}
-  }
+  },
+  announcements: [
+    {
+      timeCreated: 1469648536858,
+      type: 'lab',
+      message: 'Git Lab is due in 2 Weeks',
+      link: 'course/1/lab/12'
+    }
+  ]
 },
 {
   _id : "23123454ab2d765eef993343",
@@ -48,8 +56,15 @@ The following document describes the MongoDB Schema used by the TuxLab app:
   },
   roles: {
     'student' : ['574465a21109160b518a4299','574467a21109160b518a4334']
-  }
-
+  },
+  announcements: [
+    {
+      timeCreated: 1469648536858,
+      type: 'lab',
+      message: 'Git Lab is due in 2 Weeks',
+      link: 'course/1/lab/12'
+    }
+  ]
 }
 ```
 
@@ -59,7 +74,16 @@ The following document describes the MongoDB Schema used by the TuxLab app:
   _id : "574465a21109160b518a4299",
   course_number: "15-131",
   course_name: "Great Practical Ideas for Computer Scientists",
-  instructor_ids: ["948fhp23irjer9823r3rwef", "573de804b17eca6c452d9ff7"],
+  instructors: [
+    {
+      name: "Derek Bro",
+      id: "948fhp23irjer9823r3rwef"
+    },
+    {
+      name: "Tom Cortina",
+      id: "573de804b17eca6c452d9ff7"
+    }
+  ],
 	course_description: {
 		content: "This is the course description.",
 		syllabus: "This is the course syllabus"
