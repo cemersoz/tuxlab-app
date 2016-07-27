@@ -36,8 +36,6 @@ module.exports = [
       content: "any",
       enroll: "any"
     },
-    hidden: false,
-    disabled: false,
     featured: true,
     labs: []
   },
@@ -77,8 +75,6 @@ module.exports = [
       content: "auth",
       enroll: "none"
     },
-    hidden: false,
-    disabled: false,
     featured: true,
     labs: []
   },
@@ -118,8 +114,6 @@ module.exports = [
       content: "any",
       enroll: "any"
     },
-    hidden: false,
-    disabled: false,
     featured: true,
     labs: []
   },
@@ -152,8 +146,6 @@ module.exports = [
       content: "any",
       enroll: "none"
     },
-    hidden: false,
-    disabled: false,
     featured: true,
     labs: []
   },
@@ -188,8 +180,6 @@ module.exports = [
       content: "any",
       enroll: "any"
     },
-      hidden: false,
-      disabled: false,
       featured: true,
     labs: []
   }
