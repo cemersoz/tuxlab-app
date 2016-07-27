@@ -57,7 +57,6 @@ module.exports = [
 	  {
 	    name: "Cem Ersoz",
 	    id: "4"
-	  
 	  }
 	],
   	course_description: {

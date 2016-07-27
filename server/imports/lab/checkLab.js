@@ -4,6 +4,7 @@ var lab_orig = new lab();
 
 /// <reference path="./checkLab.d.ts" />
 module.exports = function(labfile){
+
   if(!labfile) {
     TuxLog.log("warn", "labfile is null");
     return false; 
@@ -14,6 +15,7 @@ module.exports = function(labfile){
       if(typeof lab_obj == "undefined" || typeof lab_obj == "null"){ //check for lab object
         throw new Error("tux is undefined/null");
       }
+      
       else if(typeof lab_obj.setup != 'function'){
         throw new Error("setup is not a function");
       }

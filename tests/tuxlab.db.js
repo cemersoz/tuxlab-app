@@ -42,6 +42,7 @@ describe('Database Schema', function(){
       });
     },[users]);
   });
+
   // Create Example Courses
   it('should include courses', function(){
     return server.execute(function(courses){
@@ -66,17 +67,29 @@ describe('Database Schema', function(){
 
   // Create Example Labs
   it('should include labs', function(){
-    return server.execute(function(labs,user){
+    return server.execute(function(labs){
+
       // Create Labs
       async.map(labs, function(lab, callback){
         Collections.labs.insert(lab, callback);
       }, function(err, results){
         expect(err).to.be.null;
+	expect(results).to.not.be.false;
       });
 
     },[labs_good_1]);
   });
 
+  it('should not include bad labs', function(){
+    return server.execute(function(labs){
+      
+      async.map(labs, function(lab, callback){
+        Collections.labs.insert(lab, callback);
+      },function(err,results){
+        expect(err).to.not.be.null;
+      });
+    },[labs_bad_1]);
+  });
   
   it('should not include labs', function(){
     return server.execute(function(labs){
