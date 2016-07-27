@@ -32,7 +32,7 @@ labs.allow({
     Meteor.startup(function(){
       var taskSchema = new SimpleSchema({
         _id: {
-          type: String,
+          type: String
         },
         updated: {
           type: Number
