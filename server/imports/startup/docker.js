@@ -1,6 +1,5 @@
 var dockerode = require('dockerode');
 var fs = require('fs');
-var nconf = require('nconf');
 
 var dockerode_options = {
     host: nconf.get('swarm_node_ip'),
