@@ -67,6 +67,10 @@ courses.allow({
       });
 
       var courseSchema = new SimpleSchema({
+        _id: {
+           type: String,
+           
+        },
         course_name: {
           type: String
         },
