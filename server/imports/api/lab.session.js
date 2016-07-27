@@ -56,14 +56,20 @@ session.prototype.student = null;
 session.prototype.pass = null;
 session.prototype.started = false;
 session.prototype.courseId = null;
+session.prototype.user = null;
 session.prototype.taskUpdates = [];
 
 
-session.prototype.fillJson = function(data, callback){
+session.prototype.fromJson = function(data, callback){
+  //set session fields
+  this.user = data.user;
+  this.courseId = data.courseId;
+  this.pass = data.pass;
+
   this.env = new env();
   this.env.setUser(data.user);
   this.taskUpdates = data.taskUpdates;
-  this.pass = data.pass;
+
   this.student = new student(this,data.userId,data.labId,data.courseId);
 
   getLab(data.labId,function(err,lab){
