@@ -88,6 +88,7 @@ var Session = require('../api/lab.session.js');
     callback(success) - returns boolean if success
   */
   SessionCache.add = function(userid, labid, session){
+    console.log("in add");
     async.series([
       function(cb){
         SessionCache._NodeCache.set(userid+'#'+labid, session, function(err, success){
@@ -101,18 +102,8 @@ var Session = require('../api/lab.session.js');
         });
       },
       function(cb){
-        etcd.mkdir('tuxlab/sessions/'+userid, function(err){
-          if(err && err.errorCode !== 105){
-            cb(err);
-          }
-          else{
-            cb(null);
-          }
-        });
-      },
-      function(cb){
         //TODO @cemersoz to_data method
-         
+        console.log("about to set");
         var json = {
 	  taskNo: session.lab.taskNo,
 	  taskUpdates: session.taskUpdates,
@@ -123,6 +114,7 @@ var Session = require('../api/lab.session.js');
 	  courseId: session.courseId
 	};
         etcd.set('tuxlab/sessions/'+userid+'/'+labid, JSON.stringify(json), function(err){
+          TuxLog.log("warn","here");
           cb(err);
         });
       }
