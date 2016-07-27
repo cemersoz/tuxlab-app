@@ -56,9 +56,9 @@ var NodeCache = require('node-cache');
       }
       else{
         callback(null,null);
- /*       var data = etcd.get('/tuxlab/sessions/'+userid+'/'+labid, function(err, value){
+        var data = etcd.get('/tuxlab/sessions/'+userid+'/'+labid, function(err, value){
           //TODO @cemersoz from_data method
-        });*/
+        });
       }
     });
   }
@@ -79,6 +79,7 @@ var NodeCache = require('node-cache');
             cb(true);
           }
           else{
+            TuxLog.log("warn","1");
             cb(false);
           }
         });
@@ -89,13 +90,14 @@ var NodeCache = require('node-cache');
             cb(err);
           }
           else{
+            TuxLog.log("warn","2");
             cb(null);
           }
         });
       },
       function(cb){
         //TODO @cemersoz to_data method
-         
+        TuxLog.log("warn",'3');
         var json = null;
         etcd.set('tuxlab/sessions/'+userid+'/'+labid, json, function(err){
           cb(err);
@@ -105,6 +107,7 @@ var NodeCache = require('node-cache');
       if(err){
         TuxLog.log('warn',err);
       }
+      TuxLog.log("warn","Dome");
     });
   }
 

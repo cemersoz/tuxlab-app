@@ -10,6 +10,12 @@ var env = require('./lab.env.js');
 
 function getLab(id, callback){
   var lab_data = Collections.labs.findOne({_id: id});
+
+  if(!lab_data || lab_data.length < 0){
+    TuxLog.log("warn",new Error("Lab not found"));
+    callback(new Error("Lab Not Found."), null);
+  }
+
   var labcache_id = id + "#" + lab_data.updated;
   LabCache.get(labcache_id,function(err,value){
     if(err){
@@ -17,33 +23,38 @@ function getLab(id, callback){
       callback(err,null);
     }
     else if(!value){
+      TuxLog.log("warn","didn't get from labcache");
       var file = lab_data.file;
-      var lab = eval(file);
-      
-      LabCache.set(labcache_id,lab,function(err,res){
+
+      var Lab = eval(file);
+
+      LabCache.set(labcache_id,Lab,function(err,res){
         if(err){
 	  TuxLog.log("warn",err);
 	}
-	else if(!res){
-	  TuxLog.log("warn",new Error("could not set labcache"));
-	}
-	callback(null,lab);
+        else{
+          TuxLog.log("warn","Added to labCache");
+          callback(null,Lab);
+        }
       });
     }
     else{
+      TuxLog.log("warn","got from cache");
       callback(null,value);
     }
   });
 }
 
 //constructor
-var session = function(){};
+var session = function(){
+};
 
 //define session fields
 session.prototype.env = null;
 session.prototype.lab = null;
 session.prototype.student = null;
 session.prototype.pass = null;
+session.prototype.started = false;
 session.prototype.courseId = null;
 session.prototype.taskUpdates = [];
 
@@ -66,13 +77,16 @@ session.prototype.fillJson = function(data, callback){
   });
 
 }
+session.prototype.changeStarted = function(){
+  this.started = true;
+  console.log(this.started);
+}
 /* init: pulls labFile and initializes session object from it
  */
 session.prototype.init = function(user,userId,labId,callback){
   var slf = this;
   this.env = new env();
   this.env.setUser(user);
-
   // Get Metadata from Database
   var lab_data = Collections.labs.findOne({_id: labId}, {fields: {'labfile' : 0}});
   
@@ -92,16 +106,11 @@ session.prototype.init = function(user,userId,labId,callback){
     // Get Course Metadata
     var course = Collections.courses.findOne({_id: lab_data.course_id}, {fields: {'labs' : 1 }});
 
-    // Format LabFile Cache URL
-    var labfile_id = labId + "#" + lab_data.updated;
-
-    // Check Cache for LabFile Object
-
     getLab(labId,function(err,lab){
       if(err){
         callback(err,null);
       }
-      else{
+      else if(!slf.started){
         slf.lab = lab;
 	slf.start(function(err){
 	  if(err){
@@ -115,12 +124,24 @@ session.prototype.init = function(user,userId,labId,callback){
 	        callback(err,null);
 	      }
 	      else{
-	        slf.pass = res;
-		callback({taskNo: slf.lab.taskNo,sshPass: res});
+                console.log("calling back");
+		callback(null,{taskNo: slf.lab.taskNo,sshPass: res});
 	      }
 	    });
 	  }
 	});
+      }
+      else{
+        slf.env.getPass(function(err,res){
+          console.log("already started");
+          if(err){
+            callback(err,null);
+          }
+          else{
+            slf.pass = res;
+            callback(null,{taskNo: slf.lab.taskNo,sshPass: res});
+          }
+       });
       }
     })
   }

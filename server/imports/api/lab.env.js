@@ -68,7 +68,7 @@ env.deleteRecords = function(user,callback){
 			{dockerodeStartOptions: {--your options here--}}
  */
 env.prototype.init = function(opts){
-
+  TuxLog.log("warn","env.init");
   /* create unique labVm name to avoid collisions
    * for usr: cemersoz, at time 1467752963922
    * labvm = "labVm_cemersoz_1467752963922"
@@ -165,21 +165,20 @@ env.prototype.init = function(opts){
 
                 //create etcd directory for helix record
                 var dir = slf.root_dom.split('.');
-                dir.reverse().push(slf.usr,'A');
+                dir.reverse().push(slf.usr);
                 slf.dnsKey = dir.join('/');
                 slf.dnsKey = "/skydns/"+slf.dnsKey;
-
+                console.log(slf.dnsKey);
                 slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
 
                 //set etcd record for redrouter
                 etcd.set(slf.redRouterKey,JSON.stringify(etcd_redrouter),function(err,res){
 
                   if(err){
-                    TuxLog.log('debug',err);
+                    TuxLog.log('warn',err);
                     reject(err);
                   }
                   else{
-        
                     //set etcd record for helixdns
                     slf.docker.getContainer(containerId).inspect(function(err,container){
                       if(err){
@@ -189,12 +188,14 @@ env.prototype.init = function(opts){
                       else{
                         var dnsIP = container.Node.IP;
 			//set etcd record for helix
-            	        etcd.set(slf.helixKey,{host: dnsIP},function(err,res){
+            	        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
+                           
             	          if(err){
             	            TuxLog.log('warn',err);
             	            reject(err);
             	          }
             	          else{
+                            TuxLog.log("warn","go ME!");
             	            slf.vmList.labVm = slf.labVm;
             	            resolve();
                           }
@@ -426,6 +427,7 @@ env.prototype.shell = function(vmName,command,opts) {
 	          }
 	        });//TODO: split stdout and stderr
 	        stream.on('end',function(){
+                  console.log(dat);
                   resolve(dat,stdErr);
 	        });
 	     }
@@ -440,6 +442,7 @@ env.prototype.shell = function(vmName,command,opts) {
  * calls callback(password)
  */
 env.prototype.getPass = function(callback){
+  TuxLog.log("warn","getPass");
   this.shell("labVm", "cat /pass")()
     .then(function(sOut,sErr){ callback(null,sOut); }, function(err){ callback(err,null)});
 }
