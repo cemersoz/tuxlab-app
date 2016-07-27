@@ -1,6 +1,8 @@
 /*
   Creates Session and Lab Caches
 */
+var async = require('async');
+
 var NodeCache = require('node-cache');
 var Session = require('../api/lab.session.js');
 
@@ -52,27 +54,28 @@ var Session = require('../api/lab.session.js');
         callback(err,null);
       }
       else if(value !== undefined){
+        TuxLog.log("warn","it is here");
         callback(null,value);
       }
       else{
-        callback(null,null);
-        etcd.get('/tuxlab/sessions/'+userid+'/'+labid, function(err, value){
-          if(err){
-	    TuxLog.log("warn",err);
-	    callback(err,null);
-	  }
-	  else{
-            var session = new Session();
-	    session.fromJson(value,function(err,res){
-	      if(err){
-	        callback(err,null);
-	      }
-	      else{
-	        callback(null,session);
-	      }
-	    });
-	  }
-        });
+        try{
+          var data = etcd.getSync('/tuxlab/sessions/'+userid+'/'+labid);
+          console.log("DATA",data);
+          if(data.body.node.value){
+            var sess = new Session();
+            sess.fromJson(data,function(err,res){
+              callback(err,sess);
+            });
+          }
+          else{
+            console.log("YAAAAY");
+            callback(null,null);
+          }
+        }
+        catch(e){
+          TuxLog.log("warn",e);
+          callback(null,null);
+        }
       }
     });
   }
@@ -93,7 +96,6 @@ var Session = require('../api/lab.session.js');
             cb(true);
           }
           else{
-            TuxLog.log("warn","1");
             cb(false);
           }
         });
@@ -104,7 +106,6 @@ var Session = require('../api/lab.session.js');
             cb(err);
           }
           else{
-            TuxLog.log("warn","2");
             cb(null);
           }
         });
@@ -121,7 +122,7 @@ var Session = require('../api/lab.session.js');
 	  labId: labid,
 	  courseId: session.courseId
 	};
-        etcd.set('tuxlab/sessions/'+userid+'/'+labid, Json.stringify(json), function(err){
+        etcd.set('tuxlab/sessions/'+userid+'/'+labid, JSON.stringify(json), function(err){
           cb(err);
         });
       }
@@ -129,7 +130,6 @@ var Session = require('../api/lab.session.js');
       if(err){
         TuxLog.log('warn',err);
       }
-      TuxLog.log("warn","Dome");
     });
   }
 

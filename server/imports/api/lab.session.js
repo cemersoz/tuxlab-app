@@ -27,16 +27,13 @@ function getLab(id, callback){
       var file = lab_data.file;
 
       var Lab = eval(file);
-
       LabCache.set(labcache_id,Lab,function(err,res){
+        TuxLog.log("warn","oooh no");
         if(err){
 	  TuxLog.log("warn",err);
 	}
-        else{
-          TuxLog.log("warn","Added to labCache");
-          callback(null,Lab);
-        }
       });
+      callback(null,Lab);
     }
     else{
       TuxLog.log("warn","got from cache");
@@ -57,6 +54,7 @@ session.prototype.pass = null;
 session.prototype.started = false;
 session.prototype.courseId = null;
 session.prototype.user = null;
+
 session.prototype.taskUpdates = [];
 
 
