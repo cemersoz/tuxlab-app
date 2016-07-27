@@ -8,6 +8,10 @@ module.exports = [
 	course_name: "Great Practical Ideas for Computer Scientists",
 	course_number: "15-131",
 	instructors: [
+	  {
+            name: "Super User",
+	    id: "10"
+          },
           {
 	    name: "Derek Brown",
 	    id: "1"
@@ -42,6 +46,10 @@ module.exports = [
   	course_number: '15-112',
   	course_name: 'Fundamentals of Programming',
 	instructors: [
+          {
+	    name: "Super User",
+	    id: "10"
+	  },
 	  {
 	    name: "Aaron Mortenson",
 	    id: "3"
@@ -49,6 +57,7 @@ module.exports = [
 	  {
 	    name: "Cem Ersoz",
 	    id: "4"
+	  
 	  }
 	],
   	course_description: {
@@ -79,6 +88,10 @@ module.exports = [
   	course_number: '15-122',
   	course_name: 'Principles of Imperative Computation',
 	instructors: [
+          {
+	    name: "Super User",
+	    id: "10"
+	  },
 	  {
 	    name: "Tom Cortina",
 	    id: "2"
@@ -116,6 +129,10 @@ module.exports = [
     	course_number: '15-150',
     	course_name: 'Principles of Functional Programming',
 	instructors: [
+          {
+	    name: "Super User",
+	    id: "10"
+	  },
 	  {
 	    name: "Cem Ersoz",
 	    id: "4"
@@ -146,6 +163,10 @@ module.exports = [
   	course_number: '15-251',
   	course_name: 'Great Theoretical Ideas for Computer Scientists',
 	instructors: [
+          {
+	    name: "Super User",
+	    id: "10"
+	  },
 	  {
 	    name: "Aaron Mortenson",
 	    id: "3"
