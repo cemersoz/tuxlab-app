@@ -93,6 +93,7 @@ var Session = require('../api/lab.session.js');
             cb(true);
           }
           else{
+            TuxLog.log("warn","1");
             cb(false);
           }
         });
@@ -103,6 +104,7 @@ var Session = require('../api/lab.session.js');
             cb(err);
           }
           else{
+            TuxLog.log("warn","2");
             cb(null);
           }
         });
@@ -127,6 +129,7 @@ var Session = require('../api/lab.session.js');
       if(err){
         TuxLog.log('warn',err);
       }
+      TuxLog.log("warn","Dome");
     });
   }
 
