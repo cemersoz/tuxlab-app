@@ -1,4 +1,4 @@
-module.exports =  function get_markdown(labfile) {
+export function get_markdown(labfile : string) : Array<any> {
   var outer_filter = /\/\*( |\n)*?@(.*?)( |\n)((.|\n)*?)\*\//gm;
   var match = labfile.match(outer_filter);
   var output = match.map(function(task_data, index, arr) {
