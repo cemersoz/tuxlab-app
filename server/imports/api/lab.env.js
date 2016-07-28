@@ -452,4 +452,4 @@ env.prototype.listVolumes = function() {}	//Don't know what this does
 env.prototype.createNetwork = function() {}	//Don't know what this does
 env.prototype.listNetworks = function() {}	//Don't know what this does
 env.prototype.run = function() {}			//Runs Docker commands
-module.exports = new env();
+module.exports = env;
