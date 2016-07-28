@@ -121,7 +121,7 @@ var Session = require('../api/lab.session.js');
 	  labId: labid,
 	  courseId: session.courseId
 	};
-        etcd.set('tuxlab/sessions/'+userid+'/'+labid, json, function(err){
+        etcd.set('tuxlab/sessions/'+userid+'/'+labid, Json.stringify(json), function(err){
           cb(err);
         });
       }
