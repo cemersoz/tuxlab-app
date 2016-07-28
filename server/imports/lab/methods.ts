@@ -13,9 +13,6 @@ import{ prepLab, next, verify } from './labMethods.ts';
 
 Meteor.methods({
  
-   'uploadLab': function(lab){
-     Collections.labs.insert(lab);
-   },	       
    /**prepareLab: prepares a labExec object for the current user
    * takes the id of the lab and a callback as parameter
    * callback: (err,pass)
