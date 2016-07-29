@@ -1,12 +1,13 @@
-// Import other libraries
-var nconf = require('nconf');
-var util = require('./env.util.js');
+//Import os_families
+var os_families = require('./env.util.js');
+
+
 /* constructor
  * intializes docker, etcd connection
  */
 var env = function(){
   this.util = new util();
-  this.util.parent = this;
+  this.util.env = this;
   this.docker = docker;
   this.root_dom = nconf.get('domain_root');
 }
@@ -16,8 +17,23 @@ env.prototype.labVm = '';
 env.prototype.docker = null;
 env.prototype.vmList = {};
 env.prototype.usr = null;
+
+//dnsKeys
 env.prototype.dnsKey = null;
 env.prototype.redRouterKey = null;
+
+//dnsValues
+
+//system object
+
+env.prototype.system = {
+  username: "",
+  password: "",
+  key: "",
+  os_family: "",
+  image: "",
+  ssh_port: null
+}
 
 //sets user
 env.prototype.setUser = function(user){
@@ -25,7 +41,14 @@ env.prototype.setUser = function(user){
 }
 
 //returns resolved promise for chaining
-env.prototype.start = () => {return Promise.resolve()}
+env.prototype.start = () => { return Promise.resolve() }
+
+
+//resolved and rejected promise for verifiers
+env.prototype.resolve = () => { return Promise.resolve() }
+env.prototype.reject = () =>{ return Promise.reject() }
+
+
 
 /* deleteRecords
  * delete helix and redRouter records for given user
@@ -69,25 +92,21 @@ env.deleteRecords = function(user,callback){
  * should be defined as {dockerodeCreateOptions: {--your options here--},
 			{dockerodeStartOptions: {--your options here--}}
  */
-env.prototype.init = function(opts){
-  TuxLog.log("warn","env.init");
+env.prototype.init = function(system){
   /* create unique labVm name to avoid collisions
    * for usr: cemersoz, at time 1467752963922
    * labvm = "labVm_cemersoz_1467752963922"
    */
   this.labVm = "labVm_"+this.usr+"_"+((new Date).getTime()).toString();
 
-  var dck = this.docker;
-
-  //get default image
-  var img = nconf.get('labvm_default_image');
-  var crtOpts = null
-  var strOpts = null;
-
-  //parse container create and container start options
-  if(opts){
-    crtOpts = opts.dockerodeCreateOptions;
-    strOpts = opts.dockerodeStartOptions;
+  //set env.system
+  if(!system || !system.os_family){
+    this.system = os_families.alpine;
+    _.extend(this.system,system);
+  }
+  else{
+    this.system = os_families[system.os_family];
+    _.extend(this.system,system); 
   }
 
   //declare final options
@@ -108,9 +127,9 @@ env.prototype.init = function(opts){
     'Volumes': {},
     'VolumesFrom': ''
   }
-  var strOptsf = {attach: false, detach: true};
-  //change final options according to opts input, if there is any
-  _.extend(crtOptsf, crtOpts);
+
+  //declare start options
+  var strOptsf = null;
 
   var slf = this;
   return new Promise(function(resolve,reject){
@@ -127,7 +146,7 @@ env.prototype.init = function(opts){
 
     //pull the supplied image if not already present
     //tuxlab_vm image is the current default and is present
-    dck.pull(img, function(err,stream){
+    slf.docker.pull(slf.system.image, function(err,stream){
   
       if(err) { 
         TuxLog.log("warn",err);
@@ -137,7 +156,7 @@ env.prototype.init = function(opts){
       else{
 
         //create the labVm container
-	dck.createContainer(crtOptsf,function(err,container){
+	slf.docker.createContainer(crtOptsf,function(err,container){
           if(err) { 
             TuxLog.log("warn",err);	  
             reject(err); 
@@ -159,8 +178,8 @@ env.prototype.init = function(opts){
                 //create redrouter etcd record
                 var etcd_redrouter = {
                   docker_container: containerId,
-                  port: 22,
-                  username: "root",
+                  port: slf.system.ssh_port,
+                  username: slf.system.username,
                   allowed_auth: ["password"]
 	        }
 
@@ -446,7 +465,12 @@ env.prototype.shell = function(vmName,command,opts) {
 env.prototype.getPass = function(callback){
   TuxLog.log("warn","getPass");
   this.shell("labVm", "cat /pass")()
-    .then(function(sOut,sErr){ callback(null,sOut); }, function(err){ callback(err,null)});
+    .then(function(sOut,sErr){ 
+	    if(sOut.length <= 25){
+	      slf.system.password = sOut;
+	    }
+	    callback(null,sOut); 
+    }, function(err){ callback(err,null)});
 }
 env.prototype.getNetwork = function() {}	//Don't know what this does
 env.prototype.getVolume = function() {}		//Don't know what this does
