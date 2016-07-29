@@ -54,6 +54,7 @@ session.prototype.pass = null;
 session.prototype.started = false;
 session.prototype.courseId = null;
 session.prototype.user = null;
+session.prototype.userId = null;
 
 session.prototype.taskUpdates = [];
 
@@ -63,6 +64,7 @@ session.prototype.fromJson = function(data, callback){
   this.user = data.user;
   this.courseId = data.courseId;
   this.pass = data.pass;
+  this.userId = data.userId;
 
   this.env = new env();
   this.env.setUser(data.user);
@@ -89,6 +91,11 @@ session.prototype.changeStarted = function(){
  */
 session.prototype.init = function(user,userId,labId,callback){
   var slf = this;
+  
+  //set session fields;
+  this.user = user;
+  this.userId = userId;
+
   this.env = new env();
   this.env.setUser(user);
   // Get Metadata from Database

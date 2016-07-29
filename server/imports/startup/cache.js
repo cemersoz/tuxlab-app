@@ -109,7 +109,7 @@ var Session = require('../api/lab.session.js');
 	  taskUpdates: session.taskUpdates,
 	  pass: session.pass,
 	  user:session.user,
-	  userId: userid,
+	  userId: session.userId,
 	  labId: labid,
 	  courseId: session.courseId
 	};
