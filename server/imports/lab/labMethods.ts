@@ -83,7 +83,7 @@ export function prepLab(user : string, userId: string, labId : string, callback 
       //parse sshInfo from nconf and results
       var sshInfo = {host : nconf.get("domain_root"), pass: res.sshPass};
       var taskUpdates = res.taskUpdates;
-      
+      var system = res.system;
       //map taskList into frontend schema
       mapTasks(labId,res.taskNo,function(err,res){
         if(err){
@@ -91,7 +91,7 @@ export function prepLab(user : string, userId: string, labId : string, callback 
           callback(err,null);
         }
         else{
-          callback(null,{sshInfo: sshInfo, taskList: res, taskUpdates: taskUpdates});
+          callback(null,{system: system,sshInfo: sshInfo, taskList: res, taskUpdates: taskUpdates});
         }
       });
     }
