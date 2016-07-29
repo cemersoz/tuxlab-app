@@ -32,7 +32,8 @@ env.prototype.system = {
   key: "",
   os_family: "",
   image: "",
-  ssh_port: null
+  ssh_port: null,
+  node_ip: null
 }
 
 //sets user
@@ -207,7 +208,11 @@ env.prototype.init = function(system){
                         reject(err);
                       }
                       else{
+
+                        //get container host IP
                         var dnsIP = container.Node.IP;
+			slf.system.node_ip = dnsIP;
+
 			//set etcd record for helix
             	        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
                            
@@ -216,7 +221,6 @@ env.prototype.init = function(system){
             	            reject(err);
             	          }
             	          else{
-                            TuxLog.log("warn","go ME!");
             	            slf.vmList.labVm = slf.labVm;
             	            resolve();
                           }
@@ -438,6 +442,7 @@ env.prototype.shell = function(vmName,command,opts) {
 		  //read the stream to a string
 	          while(header !== null){
 	            var type = header.readUInt8(0);
+		    console.log("type:"+type);
 		    //TODO: split stream into stdout, stderr
 	            var payload = stream.read(header.readUInt32BE(4));
 	            if(payload == null) break;
