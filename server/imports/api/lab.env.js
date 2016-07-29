@@ -1,10 +1,12 @@
 // Import other libraries
 var nconf = require('nconf');
-
+var util = require('./env.util.js');
 /* constructor
  * intializes docker, etcd connection
  */
 var env = function(){
+  this.util = new util();
+  this.util.parent = this;
   this.docker = docker;
   this.root_dom = nconf.get('domain_root');
 }
