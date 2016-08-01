@@ -238,8 +238,7 @@ session.prototype.next = function(callback){
               });
         },
         function(err){
-          TuxLog.log("warn",err);
-          callback(err,null);
+          callback(null,null);
         });
   }
 }
