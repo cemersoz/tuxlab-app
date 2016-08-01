@@ -95,7 +95,7 @@ env.deleteRecords = function(user,callback){
 			{dockerodeStartOptions: {--your options here--}}
  */
 env.prototype.init = function(system){
-
+  console.log("env.init");
   var slf = this;
 
   /* create unique labVm name to avoid collisions
@@ -178,7 +178,7 @@ env.prototype.init = function(system){
 	        reject(err);
 	      }
 	      else {
-               
+               TuxLog.log("warn","done until etcd");
                 //create redrouter etcd record
                 var etcd_redrouter = {
                   docker_container: containerId,

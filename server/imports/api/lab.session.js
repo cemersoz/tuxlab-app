@@ -125,6 +125,7 @@ session.prototype.init = function(user,userId,labId,callback){
         slf.lab = lab;
 	slf.start(function(err){
 	  if(err){
+            TuxLog.log("warn","session.start err");
             //err logged in slf.start
 	    callback(err,null);
 	  }
