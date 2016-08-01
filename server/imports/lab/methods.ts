@@ -19,11 +19,19 @@ Meteor.methods({
    * implement loading wheel, md fetch, course record create in callback
    */
   'prepareLab': function(labId : string){
+
+    //get course Id
+    var courseId = Collections.labs.findOne({_id: labId}).course_id;
+
+    //get user information
     var user = Meteor.user().profile.nickname;
     var uId = Meteor.userId();
+
+    //wrap sync functions w Meteor.wrapAsync
     var sessionAsync = Meteor.wrapAsync(prepLab);
+
     try{
-      var res = sessionAsync(user,uId,labId);
+      var res = sessionAsync(user,uId,labId,courseId);
       return res;
     }
     catch(e){
@@ -62,12 +70,13 @@ Meteor.methods({
 
     //get user nick
     var uId = Meteor.user().profile.nickname;
-
+    
+    var courseId = Collections.labs.findOne({_id: labId}).course_id;
     //wrap sync functions
     var nextAsync = Meteor.wrapAsync(next);
     
     try{
-      var res = nextAsync(uId,labId);
+      var res = nextAsync(uId,labId,courseId);
       return res;
     }
     catch(e){

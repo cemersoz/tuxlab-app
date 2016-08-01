@@ -1,12 +1,13 @@
-// Import other libraries
-var nconf = require('nconf');
-var util = require('./env.util.js');
+//Import os_families
+var os_families = require('./env.util.js');
+
+
 /* constructor
  * intializes docker, etcd connection
  */
 var env = function(){
   this.util = new util();
-  this.util.parent = this;
+  this.util.env = this;
   this.docker = docker;
   this.root_dom = nconf.get('domain_root');
 }
@@ -16,8 +17,24 @@ env.prototype.labVm = '';
 env.prototype.docker = null;
 env.prototype.vmList = {};
 env.prototype.usr = null;
+
+//dnsKeys
 env.prototype.dnsKey = null;
 env.prototype.redRouterKey = null;
+
+//dnsValues
+
+//system object
+
+env.prototype.system = {
+  username: "",
+  password: "",
+  key: "",
+  os_family: "",
+  image: "",
+  ssh_port: null,
+  node_ip: null
+}
 
 //sets user
 env.prototype.setUser = function(user){
@@ -25,7 +42,14 @@ env.prototype.setUser = function(user){
 }
 
 //returns resolved promise for chaining
-env.prototype.start = () => {return Promise.resolve()}
+env.prototype.start = () => { return Promise.resolve() }
+
+
+//resolved and rejected promise for verifiers
+env.prototype.resolve = () => { return Promise.resolve() }
+env.prototype.reject = () =>{ return Promise.reject() }
+
+
 
 /* deleteRecords
  * delete helix and redRouter records for given user
@@ -69,25 +93,21 @@ env.deleteRecords = function(user,callback){
  * should be defined as {dockerodeCreateOptions: {--your options here--},
 			{dockerodeStartOptions: {--your options here--}}
  */
-env.prototype.init = function(opts){
-  TuxLog.log("warn","env.init");
+env.prototype.init = function(system){
   /* create unique labVm name to avoid collisions
    * for usr: cemersoz, at time 1467752963922
    * labvm = "labVm_cemersoz_1467752963922"
    */
   this.labVm = "labVm_"+this.usr+"_"+((new Date).getTime()).toString();
 
-  var dck = this.docker;
-
-  //get default image
-  var img = nconf.get('labvm_default_image');
-  var crtOpts = null
-  var strOpts = null;
-
-  //parse container create and container start options
-  if(opts){
-    crtOpts = opts.dockerodeCreateOptions;
-    strOpts = opts.dockerodeStartOptions;
+  //set env.system
+  if(!system || !system.os_family){
+    this.system = os_families.alpine;
+    _.extend(this.system,system);
+  }
+  else{
+    this.system = os_families[system.os_family];
+    _.extend(this.system,system); 
   }
 
   //declare final options
@@ -108,9 +128,9 @@ env.prototype.init = function(opts){
     'Volumes': {},
     'VolumesFrom': ''
   }
-  var strOptsf = {attach: false, detach: true};
-  //change final options according to opts input, if there is any
-  _.extend(crtOptsf, crtOpts);
+
+  //declare start options
+  var strOptsf = null;
 
   var slf = this;
   return new Promise(function(resolve,reject){
@@ -127,7 +147,7 @@ env.prototype.init = function(opts){
 
     //pull the supplied image if not already present
     //tuxlab_vm image is the current default and is present
-    dck.pull(img, function(err,stream){
+    slf.docker.pull(slf.system.image, function(err,stream){
   
       if(err) { 
         TuxLog.log("warn",err);
@@ -137,7 +157,7 @@ env.prototype.init = function(opts){
       else{
 
         //create the labVm container
-	dck.createContainer(crtOptsf,function(err,container){
+	slf.docker.createContainer(crtOptsf,function(err,container){
           if(err) { 
             TuxLog.log("warn",err);	  
             reject(err); 
@@ -159,8 +179,8 @@ env.prototype.init = function(opts){
                 //create redrouter etcd record
                 var etcd_redrouter = {
                   docker_container: containerId,
-                  port: 22,
-                  username: "root",
+                  port: slf.system.ssh_port,
+                  username: slf.system.username,
                   allowed_auth: ["password"]
 	        }
 
@@ -188,7 +208,11 @@ env.prototype.init = function(opts){
                         reject(err);
                       }
                       else{
+
+                        //get container host IP
                         var dnsIP = container.Node.IP;
+			slf.system.node_ip = dnsIP;
+
 			//set etcd record for helix
             	        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
                            
@@ -412,22 +436,32 @@ env.prototype.shell = function(vmName,command,opts) {
               else{
                 var dat = ''
                 var stdErr = ''
+
+		//parse stream into stdErr and stdOut strings
 	        var header = null;
 	        stream.on('readable',function(){
 	          header = header || stream.read(8);
 
 		  //read the stream to a string
 	          while(header !== null){
-	            var type = header.readUInt8(0);
-		    //TODO: split stream into stdout, stderr
-	            var payload = stream.read(header.readUInt32BE(4));
-	            if(payload == null) break;
-		    else{
+	            //read the type and payload of the header
+                    var type = header.readUInt8(0);
+                    var payload = stream.read(header.readUInt32BE(4));
+
+	            if(payload == null){
+                       break;//if no more payload, stream should have ended
+                    }
+		    //split the stream by type
+		    else if(type == 1){
                       dat += payload; 
                     }
+		    else{
+		      stdErr += payload;
+		    }
+		    //update header
 		      header = stream.read(8);
 	          }
-	        });//TODO: split stdout and stderr
+	        });
 	        stream.on('end',function(){
                   console.log(dat);
                   resolve(dat,stdErr);
@@ -444,10 +478,12 @@ env.prototype.shell = function(vmName,command,opts) {
  * calls callback(password)
  */
 env.prototype.getPass = function(callback){
-  TuxLog.log("warn","getPass");
   this.shell("labVm", "cat /pass")()
-    .then(function(sOut,sErr){ callback(null,sOut); }, function(err){ callback(err,null)});
+    .then(function(sOut,sErr){ 
+	    callback(null,sOut); 
+    }, function(err){ callback(err,null)});
 }
+
 env.prototype.getNetwork = function() {}	//Don't know what this does
 env.prototype.getVolume = function() {}		//Don't know what this does
 env.prototype.getExec = function() {} 		//Don't know what this does
@@ -457,4 +493,5 @@ env.prototype.listVolumes = function() {}	//Don't know what this does
 env.prototype.createNetwork = function() {}	//Don't know what this does
 env.prototype.listNetworks = function() {}	//Don't know what this does
 env.prototype.run = function() {}			//Runs Docker commands
+
 module.exports = env;

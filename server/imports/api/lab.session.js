@@ -136,7 +136,7 @@ session.prototype.init = function(user,userId,labId,callback){
 	      }
 	      else{
                 console.log("calling back");
-		callback(null,{taskNo: slf.lab.taskNo,sshPass: res});
+		callback(null,{system: slf.env.system,taskNo: slf.lab.taskNo,sshPass: res});
 	      }
 	    });
 	  }
@@ -150,7 +150,7 @@ session.prototype.init = function(user,userId,labId,callback){
           }
           else{
             slf.pass = res;
-            callback(null,{taskNo: slf.lab.taskNo,sshPass: res});
+            callback(null,{system: slf.env.system, taskNo: slf.lab.taskNo,sshPass: res});
           }
        });
       }
@@ -238,8 +238,7 @@ session.prototype.next = function(callback){
               });
         },
         function(err){
-          TuxLog.log("warn",err);
-          callback(err,null);
+          callback(null,null);
         });
   }
 }
