@@ -11,13 +11,16 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
       callback(new Meteor.Error(err),null);
     }
     else if(!res){
+      console.log("!res");
       var session = new LabSession();
       session.init(user, userId,labId, function(err,result){
         if(err){
+          TuxLog.log("warn","session init err");
           //error logged in server/imports/api/lab.session.js .init
           callback(err,null);
         }
         else{
+          TuxLog.log("warn","done with session.init");
           //done sync, not absolutely necessary 
           //TODO: catch sessioncache.add errors, nothing would work if this doesnt after refresh/logout.
           SessionCache.add(user,labId,session);
@@ -40,7 +43,7 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
 }
 
 function mapTasks(labId : string,taskNo : number, callback) : any {
-  
+  console.log("in map"); 
   //Pull tasks of lab from database
   var tasks = Collections.labs.findOne({_id : labId}).tasks;
   
@@ -86,6 +89,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
       var system = res.system;
       //map taskList into frontend schema
       mapTasks(labId,res.taskNo,function(err,res){
+        console.log("mapped");
         if(err){
           //cannot have an error
           callback(err,null);
