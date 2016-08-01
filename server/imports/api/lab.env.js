@@ -221,6 +221,7 @@ env.prototype.init = function(system){
             	            reject(err);
             	          }
             	          else{
+                            TuxLog.log("warn","go ME!");
             	            slf.vmList.labVm = slf.labVm;
             	            resolve();
                           }
