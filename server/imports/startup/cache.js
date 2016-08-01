@@ -116,7 +116,7 @@ var Session = require('../api/lab.session.js');
 
 	console.log("setting: "+json);
 
-        etcd.set('tuxlab/sessions/'+userid+'/'+labid, JSON.stringify(json), function(err){
+        etcd.set('tuxlab/sessions/'+session.env.system.node_ip+ '/' + userid + '/' + labid, JSON.stringify(json), function(err){
           if(err){
 	    TuxLog.log("warn","etcd.set err");
 	    TuxLog.log("warn",err);
