@@ -1,5 +1,6 @@
 //Import os_families
-var os_families = require('./env.util.js');
+var os_families = require('./env.os_families.js');
+var util = require('./env.util.js');
 
 
 /* constructor
@@ -94,6 +95,9 @@ env.deleteRecords = function(user,callback){
 			{dockerodeStartOptions: {--your options here--}}
  */
 env.prototype.init = function(system){
+
+  var slf = this;
+
   /* create unique labVm name to avoid collisions
    * for usr: cemersoz, at time 1467752963922
    * labvm = "labVm_cemersoz_1467752963922"
@@ -113,7 +117,7 @@ env.prototype.init = function(system){
   //declare final options
   //to run docker commands without attaching a-la '-d'
   var crtOptsf = {
-    'Image': img,
+    'Image': slf.system.image,
     'Cmd': ['./entry.sh'], 
     'name': this.labVm,
     'Hostname': '',
@@ -132,7 +136,6 @@ env.prototype.init = function(system){
   //declare start options
   var strOptsf = null;
 
-  var slf = this;
   return new Promise(function(resolve,reject){
 
     //Check whether environment has been initialized correctly
