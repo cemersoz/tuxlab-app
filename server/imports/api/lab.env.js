@@ -436,23 +436,32 @@ env.prototype.shell = function(vmName,command,opts) {
               else{
                 var dat = ''
                 var stdErr = ''
+
+		//parse stream into stdErr and stdOut strings
 	        var header = null;
 	        stream.on('readable',function(){
 	          header = header || stream.read(8);
 
 		  //read the stream to a string
 	          while(header !== null){
-	            var type = header.readUInt8(0);
-		    console.log("type:"+type);
-		    //TODO: split stream into stdout, stderr
-	            var payload = stream.read(header.readUInt32BE(4));
-	            if(payload == null) break;
-		    else{
+	            //read the type and payload of the header
+                    var type = header.readUInt8(0);
+                    var payload = stream.read(header.readUInt32BE(4));
+
+	            if(payload == null){
+                       break;//if no more payload, stream should have ended
+                    }
+		    //split the stream by type
+		    else if(type == 1){
                       dat += payload; 
                     }
+		    else{
+		      stdErr += payload;
+		    }
+		    //update header
 		      header = stream.read(8);
 	          }
-	        });//TODO: split stdout and stderr
+	        });
 	        stream.on('end',function(){
                   console.log(dat);
                   resolve(dat,stdErr);
@@ -469,15 +478,12 @@ env.prototype.shell = function(vmName,command,opts) {
  * calls callback(password)
  */
 env.prototype.getPass = function(callback){
-  TuxLog.log("warn","getPass");
   this.shell("labVm", "cat /pass")()
     .then(function(sOut,sErr){ 
-	    if(sOut.length <= 25){
-	      slf.system.password = sOut;
-	    }
 	    callback(null,sOut); 
     }, function(err){ callback(err,null)});
 }
+
 env.prototype.getNetwork = function() {}	//Don't know what this does
 env.prototype.getVolume = function() {}		//Don't know what this does
 env.prototype.getExec = function() {} 		//Don't know what this does
@@ -487,4 +493,5 @@ env.prototype.listVolumes = function() {}	//Don't know what this does
 env.prototype.createNetwork = function() {}	//Don't know what this does
 env.prototype.listNetworks = function() {}	//Don't know what this does
 env.prototype.run = function() {}			//Runs Docker commands
+
 module.exports = env;

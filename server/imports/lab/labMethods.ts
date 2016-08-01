@@ -106,12 +106,13 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
 
 	    //create lab record if doesn't exist
 	    labs.push(lab);
-	    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
+	    //TODO: uncomment these, they should work...
+	  //  Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 	  }
           //update lab record if it exists
 	  else{
             labs[i].attempted = labs[i].attempted+1;
-	    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
+	//    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 	  }
 
           callback(null,{system: system,sshInfo: sshInfo, taskList: res, taskUpdates: taskUpdates});
@@ -169,7 +170,8 @@ export function next(uId : string, labId : string, courseId : string, callback :
 	  else{
 
 	    (labs[i].tasks)[(taskNo - 1)].attempted = (labs[i].tasks)[(taskNo - 1 )].attempted + 1;
-	    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
+	    //TODO: uncomment this, it should work
+	    //Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 
 	  }
 	}

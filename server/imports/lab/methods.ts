@@ -21,7 +21,7 @@ Meteor.methods({
   'prepareLab': function(labId : string){
 
     //get course Id
-    var courseId = Collection.labs.findOne({_id: labId}).course_id;
+    var courseId = Collections.labs.findOne({_id: labId}).course_id;
 
     //get user information
     var user = Meteor.user().profile.nickname;
