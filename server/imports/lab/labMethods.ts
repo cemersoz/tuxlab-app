@@ -119,6 +119,10 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
 }
 
 export function verify(uId : string, labId : string, callback : any) : void{
+
+  //renew the cache timeout
+  SessionCache.renew(uId,labId);
+
   SessionCache.get(uId, labId, function(err,result){
     if(err){
       //err logged in server/imports/startup/cache.js:51

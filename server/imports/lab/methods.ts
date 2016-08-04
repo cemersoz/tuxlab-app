@@ -4,6 +4,7 @@ declare var Collections : any;
 declare var TuxLog : any;
 declare var SessionCache : any;
 declare var nconf : any;
+declare var _ : any;
 
 //import session constructor
 var LabSession = require('../api/lab.session.js');
@@ -11,6 +12,7 @@ var LabSession = require('../api/lab.session.js');
 //import sync Meteor methods
 import{ prepLab, next, verify } from './labMethods.ts';
 
+import{ markdown_editor } from './export_markdown.ts';
 Meteor.methods({
  
    /**prepareLab: prepares a labExec object for the current user
@@ -19,7 +21,12 @@ Meteor.methods({
    * implement loading wheel, md fetch, course record create in callback
    */
   'prepareLab': function(labId : string){
+    
+    var user_sessions = Collections.users.findOne({_id: Meteor.userId()}).sessions;
+    
+    user_sessions.push({labId: labId,started: Date.now()});
 
+    Collections.users.update({_id: Meteor.userId()},{$set:{sessions: user_sessions}});
     //get course Id
     var courseId = Collections.labs.findOne({_id: labId}).course_id;
 
@@ -116,5 +123,35 @@ Meteor.methods({
 	}
       }
     });
+  },
+
+  'exportLab': function(lab_id){
+     var lab = Collections.labs.findOne({_id: lab_id});
+
+     var tasks = lab.tasks.map(function(task){
+       var l = {};
+       l[task.name] = task.markdown;
+     })
+
+     var tasks_object = tasks.reduce(_.extend,{});
+				    
+     var result_lab = markdown_editor(lab,tasks_object);  
+
+     return result_lab;
+  },
+
+  'getLastLab' : function(){
+     var sessions = Collections.users.findOne({_id: Meteor.userId()}).sessions;
+     
+     var labId = sessions.reduce(function(total,current){
+       if(current.started < total){
+         return current;
+       }
+       return total;
+     },Date.now()+100);
+
+     var courseId = Collections.labs.findOne({_id: labId}).course_id;
+
+     return {labId: labId, courseId: courseId};
   }
 });

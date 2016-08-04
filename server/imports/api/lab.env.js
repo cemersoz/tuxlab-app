@@ -180,7 +180,6 @@ env.prototype.init = function(system){
 	        reject(err);
 	      }
 	      else {
-               TuxLog.log("warn","done until etcd");
                 //create redrouter etcd record
                 var etcd_redrouter = {
                   docker_container: containerId,
@@ -197,45 +196,49 @@ env.prototype.init = function(system){
                 slf.dnsKey = "/skydns/"+slf.dnsKey;
                 console.log(slf.dnsKey);
                 slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
+           
+                slf.docker.getContainer(containerId).inspect(function(err,container){
+		  if(err){
+		    TuxLog.log("warn",err);
+		    reject(err);
+		  }
+		  else{
+		    var dnsIP = container.Node.IP;
+		    slf.system.node_ip = dnsIP;
+		    slf.system.labVm_id = containerId;
 
-                //set etcd record for redrouter
-                etcd.set(slf.redRouterKey,JSON.stringify(etcd_redrouter),function(err,res){
-
-                  if(err){
-                    TuxLog.log('warn',err);
-                    reject(err);
-                  }
-                  else{
-                    //set etcd record for helixdns
-                    slf.docker.getContainer(containerId).inspect(function(err,container){
-                      if(err){
-                        TuxLog.log('warn', err);
-                        reject(err);
-                      }
-                      else{
-
-                        //get container host IP
-                        var dnsIP = container.Node.IP;
-			slf.system.node_ip = dnsIP;
-                        slf.system.labVm_id = containerId;
-
-			//set etcd record for helix
-            	        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
-                           
-            	          if(err){
-            	            TuxLog.log('warn',err);
-            	            reject(err);
-            	          }
-            	          else{
-                            TuxLog.log("warn","go ME!");
-            	            slf.vmList.labVm = slf.labVm;
-            	            resolve();
-                          }
-                        });
-                      }
-                    });
-                  }
-                });
+		    //create etcd records asynchronously
+		    async.series([
+		      function(callback){
+		        etcd.set(slf.redRouterKey, JSON.stringify(etcd_redrouter),function(err,res){
+			  if(err){
+			    TuxLog.log("warn",err);
+			    callback(err);
+			  }
+			  else{
+			    callback(null);
+			  }
+			});
+		      },
+		      function(callback){
+		        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
+			  if(err){
+			    TuxLog.log("warn",err);
+			    callback(err);
+			  }
+			  else{
+			    callback(null);
+			  }
+			});
+		      }
+		      //add more records here if needed
+		    ],function(err){
+		      if(err){
+		        reject(err);
+		      }
+		    })
+		  }
+		});
               }
             });
           }

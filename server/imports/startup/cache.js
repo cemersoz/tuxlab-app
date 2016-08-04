@@ -44,6 +44,9 @@ var Session = require('../api/lab.session.js');
     }
   });
 
+  SessionCache.renew = function(userid,labid){
+    return "renewed";
+  }
   /*
     Gets a session from the local memory cache or ETCD
   */
