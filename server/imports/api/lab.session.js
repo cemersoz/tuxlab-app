@@ -137,7 +137,7 @@ session.prototype.init = function(user,userId,labId,callback){
 	      }
 	      else{
                 console.log("calling back");
-		callback(null,{system: slf.env.system,taskNo: slf.lab.taskNo,sshPass: res});
+		callback(null,{system: slf.env.system,taskNo: slf.lab.taskNo});
 	      }
 	    });
 	  }
@@ -151,7 +151,7 @@ session.prototype.init = function(user,userId,labId,callback){
           }
           else{
             slf.pass = res;
-            callback(null,{system: slf.env.system, taskNo: slf.lab.taskNo,sshPass: res});
+            callback(null,{system: slf.env.system, taskNo: slf.lab.taskNo});
           }
        });
       }

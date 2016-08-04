@@ -11,6 +11,7 @@ var env = function(){
   this.util.env = this;
   this.docker = docker;
   this.root_dom = nconf.get('domain_root');
+  this.system.host = this.root_dom;
 }
 
 //environment variables
@@ -30,6 +31,7 @@ env.prototype.redRouterKey = null;
 env.prototype.system = {
   username: "",
   password: "",
+  host: "",
   key: "",
   os_family: "",
   image: "",
@@ -106,11 +108,11 @@ env.prototype.init = function(system){
 
   //set env.system
   if(!system || !system.os_family){
-    this.system = os_families.alpine;
+    _.extend(this.system, os_families.alpine);
     _.extend(this.system,system);
   }
   else{
-    this.system = os_families[system.os_family];
+    _.extend(this.system, os_families[system.os_family]);
     _.extend(this.system,system); 
   }
 
@@ -215,6 +217,7 @@ env.prototype.init = function(system){
                         //get container host IP
                         var dnsIP = container.Node.IP;
 			slf.system.node_ip = dnsIP;
+                        slf.system.labVm_id = containerId;
 
 			//set etcd record for helix
             	        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
@@ -455,11 +458,11 @@ env.prototype.shell = function(vmName,command,opts) {
                        break;//if no more payload, stream should have ended
                     }
 		    //split the stream by type
-		    else if(type == 1){
-                      dat += payload; 
+		    else if(type == 1){ //data type
+                      dat += payload;  //add payload to data 
                     }
-		    else{
-		      stdErr += payload;
+		    else{ //err type
+		      stdErr += payload; //add payload to err
 		    }
 		    //update header
 		      header = stream.read(8);
@@ -481,8 +484,10 @@ env.prototype.shell = function(vmName,command,opts) {
  * calls callback(password)
  */
 env.prototype.getPass = function(callback){
+  var slf = this;
   this.shell("labVm", "cat /pass")()
     .then(function(sOut,sErr){ 
+	    slf.system = sOut;
 	    callback(null,sOut); 
     }, function(err){ callback(err,null)});
 }

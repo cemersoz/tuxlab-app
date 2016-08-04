@@ -29,15 +29,7 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
       });
     }
     else{
-      //TODO: change this to pull from somewhere
-      res.env.getPass(function(err,result){
-        if(err){
-          callback(err,null);
-        }
-        else{
-          callback(null,{taskNo:res.lab.taskNo,sshPass:result,taskUpdates: res.taskUpdates});
-        }
-      })
+      callback(null,{taskNo: res.lab.taskNo, system: res.env.system, taskUpdates: res.taskUpdates});
     }
   });
 }
@@ -119,7 +111,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
 	//    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 	  }
 
-          callback(null,{system: system,sshInfo: sshInfo, taskList: res, taskUpdates: taskUpdates});
+          callback(null,{system: system, taskList: res, taskUpdates: taskUpdates});
         }
       });
     }
