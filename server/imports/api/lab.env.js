@@ -490,7 +490,7 @@ env.prototype.getPass = function(callback){
   var slf = this;
   this.shell("labVm", "cat /pass")()
     .then(function(sOut,sErr){ 
-	    slf.system = sOut;
+	    slf.system.password = sOut;
 	    callback(null,sOut); 
     }, function(err){ callback(err,null)});
 }

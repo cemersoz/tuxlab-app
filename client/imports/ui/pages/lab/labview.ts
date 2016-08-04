@@ -80,7 +80,7 @@ export default class LabView extends MeteorComponent {
       slf.auth = {
         username: Meteor.user().profile.nickname,
         password: res.system.password,
-        domain: res.system.host
+        domain: res.system.node_ip
       };
       slf.taskUpdates = res.taskUpdates;
 

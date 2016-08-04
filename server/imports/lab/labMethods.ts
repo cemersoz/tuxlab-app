@@ -86,7 +86,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
           //cannot have an error
           callback(err,null);
         }
-        else{
+       /* else{
           var labs = Collections.course_records.findOne({course_id: courseId, user_id: userId});
 
 	  var i = labs.findIndex(function(lab){return lab._id == labId});
@@ -109,10 +109,10 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
 	  else{
             labs[i].attempted = labs[i].attempted+1;
 	//    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
-	  }
+	  }*/
 
           callback(null,{system: system, taskList: res, taskUpdates: taskUpdates});
-        }
+        //}
       });
     }
   });
