@@ -75,6 +75,18 @@ if (Meteor.isServer){
         optional: true
       }
     })
+    
+    var sessionSchema = new SimpleSchema({
+      labId:{
+        type: String
+      },
+      started:{
+        type: Number,
+	autoValue: function(){
+	  return Date.now();
+	}
+      }
+    });
 
     // Overall User Schema
     var userSchema = new SimpleSchema({
@@ -92,6 +104,9 @@ if (Meteor.isServer){
       announcements:{
         type: [announcementSchema],
         defaultValue: []
+      },
+      sessions:{
+        type: sessionSchema
       }
     });
     (<any> Meteor.users).attachSchema(userSchema);
