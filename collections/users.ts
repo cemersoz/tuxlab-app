@@ -190,7 +190,7 @@ if(Meteor.isServer) {
   Meteor.startup(function() {
     Meteor.publish('userRoles', function() {
       this.autorun(function(computation) {
-        return Meteor.users.find(this.userId, { fields: { "roles": 1} });
+        return Meteor.users.find(this.userId, { fields: { "roles": 1, "sessions": 1} });
       });
     });
   });
@@ -198,4 +198,3 @@ if(Meteor.isServer) {
 if(Meteor.isClient) {
     Meteor.subscribe('userRoles');
 }
-if

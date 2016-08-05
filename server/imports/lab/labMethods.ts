@@ -29,7 +29,7 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
           SessionCache.add(user,labId,session);
           callback(null,result);
         }
-    /  });
+      });
     }
     else{
 
