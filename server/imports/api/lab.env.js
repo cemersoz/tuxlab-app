@@ -163,6 +163,7 @@ env.prototype.init = function(system){
       }
 
       else{
+        TuxLog.log("trace","pulled docker image");
 
         //create the labVm container
 	slf.docker.createContainer(crtOptsf,function(err,container){
@@ -172,6 +173,9 @@ env.prototype.init = function(system){
 	  }
 
 	  else {
+
+            TuxLog.log("trace","created labVm container");
+
 	    //container id to be stored in etcd records
             var containerId = container.id;
 
@@ -183,12 +187,17 @@ env.prototype.init = function(system){
 	        reject(err);
 	      }
 	      else {
+
+		TuxLog.log("trace","started labVm container");
                 slf.docker.getContainer(containerId).inspect(function(err,container){
 		  if(err){
 		    TuxLog.log("warn",err);
 		    reject(err);
 		  }
 		  else{
+
+                    TuxLog.log("trace","got container info");
+
 		    var dnsIP = container.Node.IP;
 		    slf.system.node_ip = dnsIP;
 		    slf.system.labVm_id = containerId;
@@ -213,6 +222,8 @@ env.prototype.init = function(system){
 			    callback(err);
 			  }
 			  else{
+
+                            TuxLog.log("trace","created redrouter etcd record");
 			    callback(null);
 			  }
 			});
@@ -231,6 +242,8 @@ env.prototype.init = function(system){
 			    callback(err);
 			  }
 			  else{
+
+                            TuxLog.log("trace","created dns etcd record");
 			    callback(null);
 			  }
 			});
@@ -239,6 +252,14 @@ env.prototype.init = function(system){
 		    ],function(err){
 		      if(err){
 		        reject(err);
+		      }
+		      else{
+
+                        TuxLog.log("trace","initialized environment successfully");
+
+		        slf.vmList.labVm = slf.labVm;
+
+			resolve();
 		      }
 		    })
 		  }
@@ -494,6 +515,8 @@ env.prototype.getPass = function(callback){
   var slf = this;
   this.shell("labVm", "cat /pass")()
     .then(function(sOut,sErr){ 
+	    TuxLog.log("trace","got labVm password");
+
 	    slf.system.password = sOut;
 	    callback(null,sOut); 
     }, function(err){ callback(err,null)});

@@ -21,12 +21,12 @@ Meteor.methods({
    * implement loading wheel, md fetch, course record create in callback
    */
   'prepareLab': function(labId : string){
-    
-    var user_sessions = Collections.users.findOne({_id: Meteor.userId()}).sessions;
-    
-    user_sessions.push({labId: labId,started: Date.now()});
+ 
+    TuxLog.log("trace","preparing lab");
 
-    Collections.users.update({_id: Meteor.userId()},{$set:{sessions: user_sessions}});
+    this.user.sessions.push({labId: labId,started: Date.now()});
+
+//    Collections.users.update({_id: Meteor.userId()},{$set:{sessions: this.user.sessions}});
     //get course Id
     var courseId = Collections.labs.findOne({_id: labId}).course_id;
 

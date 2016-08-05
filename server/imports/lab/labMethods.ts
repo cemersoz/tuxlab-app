@@ -10,7 +10,10 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
       //error logged in server/imports/startup/cache.js:51
       callback(new Meteor.Error(err),null);
     }
+
     else if(!res){
+
+      //TODO: get from etcd
       var session = new LabSession();
       session.init(user, userId,labId, function(err,result){
         if(err){
@@ -19,22 +22,24 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
           callback(err,null);
         }
         else{
-          TuxLog.log("warn","done with session.init");
-          //done sync, not absolutely necessary 
+
+          TuxLog.log("trace","session initialized successfully");
+
           //TODO: catch sessioncache.add errors, nothing would work if this doesnt after refresh/logout.
           SessionCache.add(user,labId,session);
           callback(null,result);
         }
-      });
+    /  });
     }
     else{
+
+      TuxLog.log("trace","got existing user session successfully");
       callback(null,{taskNo: res.lab.taskNo, system: res.env.system, taskUpdates: res.taskUpdates});
     }
   });
 }
 
 function mapTasks(labId : string,taskNo : number, callback) : any {
-  console.log("in map"); 
   //Pull tasks of lab from database
   var tasks = Collections.labs.findOne({_id : labId}).tasks;
   
@@ -63,7 +68,6 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
       callback(err,null);
     }
     else{
-      TuxLog.log('warn',"got Session");
       //options not to get unnecessary fields from database
       var optsp = {'fields': {
           'labfile' : 0,
@@ -78,9 +82,11 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
       var sshInfo = {host : nconf.get("domain_root"), pass: res.sshPass};
       var taskUpdates = res.taskUpdates;
       var system = res.system;
+
+      TuxLog.log("trace","got all session info successfully");
+
       //map taskList into frontend schema
       mapTasks(labId,res.taskNo,function(err,res){
-        console.log("mapped");
         if(err){
           //cannot have an error
           callback(err,null);
@@ -109,7 +115,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
             labs[i].attempted.push(Date.now());
 	//    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 	  }*/
-
+          TuxLog.log("trace","updated course_records successfully");
           callback(null,{system: system, taskList: res, taskUpdates: taskUpdates});
         //}
       });
