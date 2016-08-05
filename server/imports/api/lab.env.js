@@ -35,6 +35,8 @@ env.prototype.system = {
   key: "",
   os_family: "",
   image: "",
+  labVm_id: "",
+  containers: [], 
   ssh_port: null,
   node_ip: null
 }
@@ -367,6 +369,7 @@ env.prototype.createVm = function(opts) {
 
                   //add container to slf.vmList to keep track
 	          slf.vmList[crtOpt.name] = cName;
+		  slf.system.containers.push(container.id);
 		  resolve();
                 }
 	      });

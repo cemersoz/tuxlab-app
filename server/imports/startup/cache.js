@@ -105,18 +105,16 @@ var Session = require('../api/lab.session.js');
         });
       },
       function(cb){
-        //TODO @cemersoz to_data method
 
         var json = {
 	  taskNo: session.lab.taskNo,
+	  system: session.env.system,
 	  taskUpdates: session.taskUpdates,
-	  pass: session.pass,
 	  user:session.user,
 	  userId: session.userId,
 	  labId: labid,
 	  courseId: session.courseId
 	};
-
 
         etcd.set('tuxlab/sessions/'+session.env.system.node_ip+ '/' + userid + '/' + labid, JSON.stringify(json), function(err){
           if(err){
