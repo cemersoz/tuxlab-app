@@ -97,7 +97,8 @@ env.deleteRecords = function(user,callback){
 			{dockerodeStartOptions: {--your options here--}}
  */
 env.prototype.init = function(system){
-  console.log("env.init");
+
+  TuxLog.log("trace","initalizing the user environment");
   var slf = this;
 
   /* create unique labVm name to avoid collisions
@@ -497,7 +498,6 @@ env.prototype.shell = function(vmName,command,opts) {
 	          }
 	        });
 	        stream.on('end',function(){
-                  console.log(dat);
                   resolve(dat,stdErr);
 	        });
 	     }
