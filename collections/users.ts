@@ -106,7 +106,8 @@ if (Meteor.isServer){
         defaultValue: []
       },
       sessions:{
-        type: sessionSchema
+        type: [sessionSchema],
+	defaultValue: []
       }
     });
     (<any> Meteor.users).attachSchema(userSchema);
@@ -198,4 +199,3 @@ if(Meteor.isServer) {
 if(Meteor.isClient) {
     Meteor.subscribe('userRoles');
 }
-if
