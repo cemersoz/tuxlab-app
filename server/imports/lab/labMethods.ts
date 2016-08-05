@@ -11,7 +11,6 @@ function getSession(user : string, userId, labId : string, callback : any) : voi
       callback(new Meteor.Error(err),null);
     }
     else if(!res){
-      console.log("!res");
       var session = new LabSession();
       session.init(user, userId,labId, function(err,result){
         if(err){
