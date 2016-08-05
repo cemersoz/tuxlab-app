@@ -96,7 +96,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
             var lab = {
 	      _id: labId,
 	      data: {},
-	      attempted: 1,
+	      attempted: [Date.now()],
 	      tasks: res
 	    }
 
@@ -107,7 +107,7 @@ export function prepLab(user : string, userId: string, labId : string, courseId:
 	  }
           //update lab record if it exists
 	  else{
-            labs[i].attempted = labs[i].attempted+1;
+            labs[i].attempted.push(Date.now());
 	//    Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 	  }*/
 
@@ -169,7 +169,8 @@ export function next(uId : string, labId : string, courseId : string, callback :
 	  }
 	  else{
 
-	    (labs[i].tasks)[(taskNo - 1)].attempted = (labs[i].tasks)[(taskNo - 1 )].attempted + 1;
+	    (labs[i].tasks)[(taskNo - 1)].attempted.push(Date.now());
+	    labs[i].tasks[(taskNo - 1)].status = "IN_PROGRESS";
 	    //TODO: uncomment this, it should work
 	    //Collections.course_records.update({course_id: courseId, user_id: userId},{$set:{labs: labs}});
 
@@ -190,7 +191,11 @@ export function next(uId : string, labId : string, courseId : string, callback :
 		callback(new Meteor.Error("No course record found for lab in use"),null);
 	      }
 	      else{
-	        (labs[i].tasks)[(res - 2)].attempted = (labs[i].tasks)[(taskNo - 2)].attempted + 1;
+	        (labs[i].tasks)[(res - 2)].attempted.push(Date.now());
+
+                labs[i].tasks[(taskNo - 1)].status = "IN_PROGRESS";
+	        labs[i].tasks[taskNo].status = "IN_PROGRESS";
+
 		callback(null,{taskList: ress, taskNo: res, taskUpdates:result.taskUpdates});
 	      }
             }

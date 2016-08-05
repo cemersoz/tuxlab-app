@@ -57,7 +57,7 @@ if(Meteor.isServer) {
         optional: true
       },
       attempted: {
-        type: Number
+        type: [Number]
       }
     });
     var labSchema = new SimpleSchema({
@@ -75,7 +75,7 @@ if(Meteor.isServer) {
         optional: true
       },
       attempted: {
-        type: Number
+        type: [Number]
       },
       tasks: {
         type: [taskSchema]

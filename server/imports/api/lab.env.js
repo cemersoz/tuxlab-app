@@ -105,6 +105,9 @@ env.prototype.init = function(system){
    * labvm = "labVm_cemersoz_1467752963922"
    */
   this.labVm = "labVm_"+this.usr+"_"+((new Date).getTime()).toString();
+  
+  //import os_families
+  var os_families = require('./env.os_families.js');
 
   //set env.system
   if(!system || !system.os_family){
@@ -180,23 +183,6 @@ env.prototype.init = function(system){
 	        reject(err);
 	      }
 	      else {
-                //create redrouter etcd record
-                var etcd_redrouter = {
-                  docker_container: containerId,
-                  port: slf.system.ssh_port,
-                  username: slf.system.username,
-                  allowed_auth: ["password"]
-	        }
-
-
-                //create etcd directory for helix record
-                var dir = slf.root_dom.split('.');
-                dir.reverse().push(slf.usr);
-                slf.dnsKey = dir.join('/');
-                slf.dnsKey = "/skydns/"+slf.dnsKey;
-                console.log(slf.dnsKey);
-                slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
-           
                 slf.docker.getContainer(containerId).inspect(function(err,container){
 		  if(err){
 		    TuxLog.log("warn",err);
@@ -210,6 +196,17 @@ env.prototype.init = function(system){
 		    //create etcd records asynchronously
 		    async.series([
 		      function(callback){
+                        //create redrouter etcd record
+                        var etcd_redrouter = {
+                          docker_container: containerId,
+                          port: slf.system.ssh_port,
+                          username: slf.system.username,
+                          allowed_auth: ["password"]
+                        }
+                        
+			//create redrouter etcd key
+			slf.redRouterKey = '/redrouter/SSH::'+slf.usr;
+
 		        etcd.set(slf.redRouterKey, JSON.stringify(etcd_redrouter),function(err,res){
 			  if(err){
 			    TuxLog.log("warn",err);
@@ -221,6 +218,13 @@ env.prototype.init = function(system){
 			});
 		      },
 		      function(callback){
+
+			//create dns record key
+                        var dir = slf.root_dom.split('.');
+                        dir.reverse().push(slf.usr);
+                        slf.dnsKey = dir.join('/');
+                        slf.dnsKey = "/skydns/"+slf.dnsKey;
+
 		        etcd.set(slf.dnsKey,JSON.stringify({host: dnsIP}),function(err,res){
 			  if(err){
 			    TuxLog.log("warn",err);

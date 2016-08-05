@@ -24,14 +24,6 @@ var os_families = {
     image: ""
   },
 
-  ubuntu: {
-    username: "",
-    password: "",
-    key: "",
-    os_family: "ubuntu",
-    image: "ubuntu"
-  },
-
   debian: {
     username: "",
     password: "",
